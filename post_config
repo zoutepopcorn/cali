@@ -1,0 +1,66 @@
+Arch Linux installation - post base install configuration
+
+useradd -m -g users -s /bin/bash -G wheel cytopyge
+
+passwd cytopyge
+
+visudo
+%wheel ALL=(ALL) ALL
+
+exit
+
+login as cytopyge
+
+pacman -Sy git vim
+
+git clone https://aur.archlinux.org/package-query.git
+cd package-query
+makepkg -si
+cd ..
+git clone https://aur.archlinux.org/yaourt.git
+cd yaourt
+makepkg -si
+cd
+rm -rf package-query yaourt
+
+# configure pacman
+vim /etc/pacman.conf
+
+#uncomment [multilib]
+#uncomment TotalDownload
+
+#add repository:
+
+[archlinuxfr]
+SigLevel = Never
+Server = http://repo.archlinux.fr/$arch
+
+#update mirrorlist
+cd /etc/pacman.d
+sudo cp mirrorlist mirrorlist.org
+rankmirrors -n 10 mirrorlist.org | grep -w 'Server =' > mirrorlist
+
+yaourt -Sy linux-lts linux-lts-headers powerline powerline-fonts terminus-font zsh zsh-completions glances tmux srm openssl openvpn
+
+# configuring z shell (zsh)
+# check the current default shell type:
+echo $SHELL
+
+#changing the shell from bash to z shell
+[cytopyge@parvus ~]$ chsh -l
+/bin/sh
+/bin/bash
+/usr/bin/git-shell
+/bin/zsh
+/usr/bin/zsh
+[cytopyge@parvus ~]$ chsh -s /bin/zsh
+Changing shell for cytopyge.
+Password:
+Shell changed.
+
+restart terminal
+... configuration dialog ...
+history configuration > save default configuration
+completion system (compsys) > 1 & 4
+key behavior > bindkey -v
+on/off follwing are set > beep off 

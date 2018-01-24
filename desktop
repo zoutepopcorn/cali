@@ -1,0 +1,76 @@
+Install Desktop environment*
+
+the simple way with:
+
+yaourt -Sy gnome gnome-tweak-tool
+
+OR (manually, if specific drivers are needed):
+
+- install XORG display server
+- install graphics driver
+- install display manager
+
+- install XORG display server
+(https://wiki.archlinux.org/index.php/Xorg)
+
+- (dell xps 13 & asus ux501j & asusbak)
+yaourt -Sy xf86-input-libinput xorg-server xorg-xinit mesa
+
+
+        (surface pro 4)
+        pacman -Sy xf86-input-libinput xorg-server xorg-xinit
+
+- install graphics driver
+#determine graphics driver hardware
+lspci
+#intel
+yaourt -Sy xf86-video-intel lib32-intel-dri lib32-mesa lib32-libgl (dell xps 13, archbak(not confirmed))
+(surface pro 4)
+
+pacman -Sy xf86-video-intel mesa-libgl (lib32-mesa-libgl)
+
+>>>>>> yaourt -Sy xf86-input-libinput xorg-server xorg-xinit mesa
+>>>>>          xf86-video-intel mesa-libgl 
+>>>>>>		gnome gnome-tweak-tool
+>>>>>> vbx
+
+          #nvidia (native)
+         pacman -Sy nvidia lib32-nvidia-libgl nvidia-utils lib32-nvidia-utils (asus ux501j, archbak(not confirmed))
+
+         #nvidia (opensource nouveau)
+         pacman -Sy nouveau ...
+
+- install display manager (login manager)
+
+          (https://wiki.archlinux.org/index.php/Display_manager)
+
+         GNOME
+yaourt - Sy gnome gnome-tweak-tool
+
+OR
+         pacman -Sy gdm gnome-shell gnome-shell-extensions gnome-control-center gnome-terminal gnome-system-monitor                     gnome-tweak-tool nautilus
+
+          same for surface
+
+GDM
+sudo systemctl enable gdm
+(created symlink)
+
+or (security through obscurity):
+sudo systemctl start gdm
+
+for other video cards try:
+AMD     xf86-video-amdgpu
+Intel     xf86-video-intel
+Nvidia     xf86-video-nouveau
+as fallback     xf86-video-vesa
+
+*https://wiki.archlinux.org/index.php/Desktop_environment
+
+#Activate bluetooth
+sudo systemctl start bluetooth
+
+back to main:
+Install Arch Linux - Main
+
+configure desktop environment:
