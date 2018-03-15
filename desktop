@@ -2,9 +2,12 @@ Install Desktop environment*
 
 the simple way with:
 
-yaourt -Sy gnome gnome-tweak-tool
+yaourt -Sy gnome gnome-tweak-tool gnome-terminal-transparency
+
+--------------------------------------------------------------------------------
 
 OR (manually, if specific drivers are needed):
+(sorry for the mess, these are just notes ...)
 
 - install XORG display server
 - install graphics driver
@@ -69,8 +72,3 @@ as fallback     xf86-video-vesa
 
 #Activate bluetooth
 sudo systemctl start bluetooth
-
-back to main:
-Install Arch Linux - Main
-
-configure desktop environment:
