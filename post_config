@@ -11,7 +11,7 @@ exit
 
 login as cytopyge
 
-pacman -Sy git vim
+pacman -Sy git gvim
 
 git clone https://aur.archlinux.org/package-query.git
 cd package-query
