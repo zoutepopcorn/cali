@@ -1,0 +1,2 @@
+#low-level commands (https://en.wikipedia.org/wiki/Magic_SysRq_key#Commands)
+echo 1 > /proc/sys/kernel/sysrq
