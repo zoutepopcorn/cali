@@ -40,7 +40,9 @@ cd /etc/pacman.d
 sudo cp mirrorlist mirrorlist.org
 rankmirrors -n 10 mirrorlist.org | grep -w 'Server =' > mirrorlist
 
-yaourt -Sy linux-lts linux-lts-headers powerline powerline-fonts terminus-font zsh zsh-completions glances tmux srm openssl openvpn bluez bluez-utils
+yaourt -Sy linux-lts linux-lts-headers powerline powerline-fonts terminus-font \
+zsh zsh-completions glances tmux srm openssl openvpn bluez bluez-utils \
+iotop glances wavemon iftop wireshark-gtk vifm
 
 # configuring z shell (zsh)
 # check the current default shell type:
