@@ -72,3 +72,13 @@ as fallback     xf86-video-vesa
 
 #Activate bluetooth
 sudo systemctl start bluetooth
+
+---------------------------------------------------------------------------------
+
+suckless.org dwm
+
+git clone https://aur..archlinux.org/dwm-git.git
+chown user: <directory>
+makepkg
+pacman -U <tarball>
+echo 'exec dwm' > ~/.xinitrc
