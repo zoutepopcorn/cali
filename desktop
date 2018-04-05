@@ -76,9 +76,6 @@ sudo systemctl start bluetooth
 ---------------------------------------------------------------------------------
 
 suckless.org dwm
-
-git clone https://aur..archlinux.org/dwm-git.git
-chown user: <directory>
-makepkg
-pacman -U <tarball>
+----------------
+yaourt -Sy xorg xorg-xinit xterm dwm st dmenu slock
 echo 'exec dwm' > ~/.xinitrc
