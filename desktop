@@ -88,11 +88,31 @@ pacman -Sy ttf-inconsolata
 fc-list | grep -i inconsolata
 ... further steps needed
 
-headphones:
+#headphones:
 yay alsa-utils
 alsactl restore
 
-audio volume:
-amixer
+#audio volume:
+# set volume with amixer
 amixer set Master [0-65536]
+# volume up
+amixer set Master playback 5000+ unmute
+# volume down
+amixer set Master playback 5000- unmute
+# mute
+amixer set Master playback mute
+# unmute
+amixer set Master playback unmute
 
+
+>>> to config.h:
+
+""
+I use xbindkeys with my dedicated volume buttons to control the volume level.
+
+Create the file with gedit (or other text editor): /home/~/.xbindkeys.scm
+
+(xbindkey '("XF86AudioRaiseVolume") "amixer set Master 2dB+ unmute")
+(xbindkey '("XF86AudioLowerVolume") "amixer set Master 2dB- unmute")
+You need to see what keysym Fn + up-arrow and Fn + down-arrow produce with xev.  You can change it if need be (if they don't currently produce XF86AudioRaiseVolume and XF86AudioLowerVolume) with /home/~/.xmodmap.
+""
