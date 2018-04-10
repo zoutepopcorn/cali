@@ -88,7 +88,12 @@ pacman -Sy ttf-inconsolata
 fc-list | grep -i inconsolata
 ... further steps needed
 
-#headphones:
+# backlight
+xbacklight -set 75
+xbacklight -inc 5
+xbacklight -dec 5
+
+# headphones:
 yay alsa-utils
 alsactl restore
 
