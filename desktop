@@ -110,9 +110,6 @@ amixer set Master playback mute
 # unmute
 amixer set Master playback unmute
 
-
->>> to config.h:
-
 ""
 I use xbindkeys with my dedicated volume buttons to control the volume level.
 
@@ -124,3 +121,14 @@ You need to see what keysym Fn + up-arrow and Fn + down-arrow produce with xev.
 You can change it if need be (if they don't currently produce
 XF86AudioRaiseVolume and XF86AudioLowerVolume) with /home/~/.xmodmap.
 ""
+
+# update statusbar with
+# time
+# Statusbar loop
+while true; do
+   xsetroot -name "$( date +"%a %d %H:%M" )"
+   sleep 1m    # Update time every minute
+done &
+
+# conky
+(conky | while read LINE; do xsetroot -name "$LINE"; done) &
