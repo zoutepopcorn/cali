@@ -120,5 +120,7 @@ Create the file with gedit (or other text editor): /home/~/.xbindkeys.scm
 
 (xbindkey '("XF86AudioRaiseVolume") "amixer set Master 2dB+ unmute")
 (xbindkey '("XF86AudioLowerVolume") "amixer set Master 2dB- unmute")
-You need to see what keysym Fn + up-arrow and Fn + down-arrow produce with xev.  You can change it if need be (if they don't currently produce XF86AudioRaiseVolume and XF86AudioLowerVolume) with /home/~/.xmodmap.
+You need to see what keysym Fn + up-arrow and Fn + down-arrow produce with xev.
+You can change it if need be (if they don't currently produce
+XF86AudioRaiseVolume and XF86AudioLowerVolume) with /home/~/.xmodmap.
 ""
