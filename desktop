@@ -80,3 +80,19 @@ suckless.org dwm
 yaourt -Sy xorg xorg-xinit xterm dwm st dmenu slock
 echo 'xrandr --output eDP1 --scale 0.6x0.6' > ~/.xinitrc
 echo 'exec dwm' > ~/.xinitrc
+
+# install inconsolata:
+pacman -Sy ttf-inconsolata
+# it installs to: /usr/share/fonts/TTF
+# check if installed
+fc-list | grep -i inconsolata
+... further steps needed
+
+headphones:
+yay alsa-utils
+alsactl restore
+
+audio volume:
+amixer
+amixer set Master [0-65536]
+
