@@ -103,6 +103,8 @@ amixer set Master playback 5000- unmute
 amixer set Master playback 5%+ unmute
 # volume down
 amixer set Master playback 5%- unmute
+# toggle mute
+amixer set Master playback toggle
 # mute
 amixer set Master playback mute
 # unmute
