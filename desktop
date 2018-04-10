@@ -75,7 +75,7 @@ sudo systemctl start bluetooth
 
 ---------------------------------------------------------------------------------
 
-suckless.org dwm
+suckless dwm
 ----------------
 yaourt -Sy xorg xorg-xinit xterm dwm st dmenu slock
 echo 'xrandr --output eDP1 --scale 0.6x0.6' > ~/.xinitrc
@@ -99,6 +99,10 @@ amixer set Master [0-65536]
 amixer set Master playback 5000+ unmute
 # volume down
 amixer set Master playback 5000- unmute
+# volume up
+amixer set Master playback 5%+ unmute
+# volume down
+amixer set Master playback 5%- unmute
 # mute
 amixer set Master playback mute
 # unmute
