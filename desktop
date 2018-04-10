@@ -137,3 +137,18 @@ done &
 
 # conky
 (conky | while read LINE; do xsetroot -name "$LINE"; done) &
+
+# touchpad
+# identify touchpad device
+grep -e "Using input driver libinput" ~/.local/share/xorg/Xorg.0.log
+# create inputclass for tp
+sudo vim /etc/X11/xorg.conf.d/30-touchpad.conf
+
+section "InputClass"
+        Identifier "DLL075B:01 06CB:76AF Touchpad"
+        MatchIsTouchpad "on"
+        Driver "libinput"
+        Option "Tapping" "on"
+	Option "ClickMethod" "clickfinger"
+	Option "NaturalScrolling" "true"
+EndSection
