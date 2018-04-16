@@ -47,8 +47,11 @@ The recommended installations steps are;
 https://www.archlinux.org/download/
 
 # write image to usb device
-https://wiki.archlinux.org/index.php/USB_flash_installation_media#Using_dd
+https://wiki.archlinux.org/index.php/USB_flash_installation_media
+#Using_dd
 dd if=/path/to/archlinux.iso of=/dev/sdX bs=4M status=progress oflag=sync
+## download and install direct to /dev/sdX (!check archlinux version):
+curl -L https://mirror.i3d.net/pub/archlinux/iso/2018.04.01/archlinux-2018.04.01-x86_64.iso | sudo dd of=/dev/sdX
 
 # insert usb device and reboot the system
 # archiso live environment
