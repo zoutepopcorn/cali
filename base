@@ -137,6 +137,70 @@ timedatectl status
 
 1.5 Partition the disks
 
+
+## [OPTION] LVM on LUKS
+##=============================
+## https://wiki.archlinux.org/index.php/Dm-crypt/Encrypting_an_entire_system#LUKS_on_LVM
+
+partition 1: /boot
+partition 2: LUKS container with: /root /home /usr /var /swap
+
+gdisk /dev/sdX
+partition 1 512M ef00 (EFI System)
+partition 2 rest 8e00 (Linux LVM)
+
+
+## create luks encrypted container
+cryptsetup luksFormat --type luks2 /dev/sdX2
+
+
+## open container
+cryptsetup open /dev/sda1 cryptlvm
+
+
+## create physical volume
+pvcreate /dev/mapper/cryptlvm
+
+
+## create volume group
+vgcreate volgroup0 /dev/mapper/cryptlvm
+
+
+## create logical volumes on the volume group
+lvcreate -L 40G volgroup0 -n lv_root
+lvcreate -L 40G volgroup0 -n lv_home
+lvcreate -L 40G volgroup0 -n lv_usr
+lvcreate -L 40G volgroup0 -n lv_var
+lvcreate -L 4G volgroup0 -n lv_swap
+
+
+## create filesystems
+mkfs.vfat -F 32 -n BOOT /dev/sdY1
+mkfs.ext4 -L ROOT /dev/mapper/volgroup0-lv_root
+mkfs.ext4 -L HOME /dev/mapper/volgroup0-lv_home
+mkfs.ext4 -L USR /dev/mapper/volgroup0-lv_usr
+mkfs.ext4 -L VAR /dev/mapper/volgroup0-lv_var
+mkswap -L SWAP /dev/mapper/volgroup0-lv_swap
+
+
+## mount filesystem partitions
+mount /dev/volgroup0/lv_root /mnt
+
+mkdir /mnt/boot
+mkdir /mnt/home
+mkdir /mnt/var
+
+mount /dev/sdY1 /mnt/boot
+mount /dev/volgroup0/lv_home /mnt/home
+mount /dev/volgroup0/lv_usr /mnt/usr
+mount /dev/volgroup0/lv_var /mnt/var
+
+swapon /dev/volgroup0/lv_swap
+
+
+## goto '2 installation' 
+
+
 # [OPTION] plain disk encryption
 #================================
 # configuring dm-crypt plain64 with lvm
@@ -145,7 +209,7 @@ timedatectl status
 vgchange -a n volgroup0
 cryptsetup plainClose lvm
 #(create blank GPT)
-gdisk /dev/nvme0n1 
+gdisk /dev/nvme0n1
 
 # [OPTION]
 cryptsetup benchmark
@@ -222,6 +286,9 @@ lsblk -af
 # [OPTION] record partition & mountpoint configuration
 lsblk -af >> <install_note>
 
+
+
+
 2 Installation
 
 2.1 [OPTION] Configure mirrorlist
@@ -232,6 +299,9 @@ rankmirrors -v -n 10 mirrorlist.full | grep -w 'Server =' > mirrorlist
 2.2 Install the base packages
 
 pacstrap -i /mnt base base-devel
+
+
+
 
 3 Configure the system
 
@@ -321,6 +391,9 @@ options cryptdevice=[UUID=:lvm]/[/dev/sdY1:lvm] crypto=sha512:aes-xts-plain64:51
 # generate initramfs with mkinitcpio
 # for linux preset
 mkinitcpio -p linux
+
+# for linux-lts preset
+mkinitcpio -p linux-lts
 
 3.9 Exit chroot
 
