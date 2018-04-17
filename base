@@ -155,7 +155,7 @@ cryptsetup luksFormat --type luks2 /dev/sdX2
 
 
 ## open container
-cryptsetup open /dev/sda1 cryptlvm
+cryptsetup open /dev/sdX2 cryptlvm
 
 
 ## create physical volume
@@ -188,6 +188,7 @@ mount /dev/volgroup0/lv_root /mnt
 
 mkdir /mnt/boot
 mkdir /mnt/home
+mkdir /mnt/usr
 mkdir /mnt/var
 
 mount /dev/sdY1 /mnt/boot
@@ -198,7 +199,7 @@ mount /dev/volgroup0/lv_var /mnt/var
 swapon /dev/volgroup0/lv_swap
 
 
-## goto '2 installation' 
+## >>>> goto '2 installation' below
 
 
 # [OPTION] plain disk encryption
@@ -448,3 +449,25 @@ options cryptdevice=UUID=<UUID>:<mapped-name> root=/dev/mapper/<mapped-name> qui
 # create initramfs
 vi /etc/mkinitcpio.conf
 HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)
+
+## [ERROR] on boot:
+##--------------------
+## reboot with installation medium
+
+cryptsetup open /dev/sdX2 cryptlvm
+
+mount /dev/volgroup0/lv_root /mnt
+
+mkdir /mnt/boot /mnt/home /mnt/usr /mnt/var
+
+mount /dev/sdX1 /mnt/boot
+mount /dev/volgroup0/lv_home /mnt/home
+mount /dev/volgroup0/lv_usr /mnt/usr
+mount /dev/volgroup0/lv_var /mnt/var
+
+swapon /dev/volgroup0/lv_swap
+
+[CHECK]
+lsblk -af
+
+arch-chroot /mnt
