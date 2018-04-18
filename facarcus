@@ -1,0 +1,163 @@
+##~~~~~~~~~~~~~~~~~~~~~~~~~~
+## facarcus 
+## arch installation script
+## by cytopyge
+##~~~~~~~~~~~~~~~~~~~~~~~~~~
+ip a
+dhcpcd eno1
+lspci -k | grep 'Network controller'
+curl ident.me
+pacman -Sy terminus-font
+pacman -Ql terminus-font
+setfont ter-v32n
+timedatectl set-ntp true
+timedatectl set-timezone Europe/Amsterdam
+timedatectl status
+gdisk /dev/sdX
+>>>partition 1 512M ef00 (EFI System)
+>>>partition 2 rest 8e00 (Linux LVM)
+cryptsetup luksFormat --type luks2 /dev/sdX2
+cryptsetup open /dev/sdX2 cryptlvm
+pvcreate /dev/mapper/cryptlvm
+vgcreate vg0 /dev/mapper/cryptlvm
+lvcreate -L 40G vg0 -n lv_root
+lvcreate -L 40G vg0 -n lv_home
+lvcreate -L 40G vg0 -n lv_usr
+lvcreate -L 40G vg0 -n lv_var
+lvcreate -L 4G vg0 -n lv_swap
+mkfs.vfat -F 32 -n BOOT /dev/sdY1
+mkfs.ext4 -L ROOT /dev/mapper/vg0-lv_root
+mkfs.ext4 -L HOME /dev/mapper/vg0-lv_home
+mkfs.ext4 -L USR /dev/mapper/vg0-lv_usr
+mkfs.ext4 -L VAR /dev/mapper/vg0-lv_var
+mkswap -L SWAP /dev/mapper/vg0-lv_swap
+mount /dev/vg0/lv_root /mnt
+mkdir /mnt/boot
+mkdir /mnt/home
+mkdir /mnt/usr
+mkdir /mnt/var
+>>>mount /dev/sdY1 /mnt/boot
+mount /dev/vg0/lv_home /mnt/home
+mount /dev/vg0/lv_usr /mnt/usr
+mount /dev/vg0/lv_var /mnt/var
+swapon /dev/vg0/lv_swap
+cd /etc/pacman.d
+cp mirrorlist mirrorlist.full
+rankmirrors -v -n 10 mirrorlist.full | grep -w 'Server =' > mirrorlist
+pacstrap -i /mnt base base-devel
+genfstab -L -p /mnt >> /mnt/etc/fstab
+arch-chroot /mnt
+ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
+hwclock --systohc
+sed -i '1ien_US.UTF-8' /etc/locale.gen
+locale-gen
+sed -i '1iLANG=en_US.UTF-8' /etc/locale.conf
+>>>echo <hostname> > /etc/hostname
+echo '127.0.0.1    localhost.localdomain    localhost' >> /etc/hosts
+echo '::1    localhost.localdomain    localhost' >> /etc/hosts
+echo '127.0.1.1     <system_name>.localdomain     <system_name>' >> /etc/hosts
+passwd
+pacman -Sy openssh linux-headers linux-lts linux-lts-headers wpa_supplicant wireless_tools
+bootctl install
+bootctl status
+# for boot (menu) configuration
+echo 'timeout 3' > /boot/loader/loader.conf
+echo 'default arch' >> /boot/loader/loader.conf
+
+3.8 Initramfs
+
+# configuring mkinitcpio.conf, which is used to
+# create an initial ramdisk environment (initramfs)
+vi /etc/mkinitcpio.conf
+HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)
+
+# configuring boot loader entries
+# a *.conf file for every kernel that is available
+vi /boot/loader/entries/arch.conf
+title Arch Linux Encrypted
+linux /vmlinuz-linux
+initrd /initramfs-linux.img
+options cryptdevice=[UUID=:lvm]/[/dev/sdY1:lvm] crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/volgroup0-lv_root resume=/dev/mapper/volgroup0-lv_swap
+
+# generate initramfs with mkinitcpio
+# for linux preset
+mkinitcpio -p linux
+
+# for linux-lts preset
+mkinitcpio -p linux-lts
+
+3.9 Exit chroot
+
+# exit arch-chroot environment and go back to the archiso environment
+
+4 Reboot
+
+exit
+
+umount -R /mnt
+
+# remove boot medium
+
+reboot
+
+
+#------------------------
+
+additional comments:
+
+mkinitcpio -p linux-lts
+
+#in the fstab options for 'BOOT'; replace 'rw' with 'ro'
+#when the kernel is updated remount boot partition read/write:
+
+sudo mount -o remount,rw /dev/sdY1 /boot
+
+#read only:
+sudo mount -o remount,ro /dev/sdY1 /boot
+
+# for linux-lts preset
+# do this always separate from the linux preset!!
+# check location of /boot
+lsblk -af
+# remount /boot rw
+sudo mount -o remount,rw /dev/sda1 /boot
+# configure arch-lts.conf (see above)
+# generate
+mkinitcpio -v -p linux-lts
+
+# [OPTION] LUKS 
+#--------------------
+vi /
+boot/loader/entries/
+arch.conf
+'title Arch Linux Encrypted
+linux /vmlinuz-linux
+initrd /initramfs-linux.img
+options cryptdevice=UUID=<UUID>:<mapped-name> root=/dev/mapper/<mapped-name> quiet rw'
+
+# configuring mkinitcpio.conf
+# create initramfs
+vi /etc/mkinitcpio.conf
+HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)
+
+## [ERROR] on boot:
+##--------------------
+## reboot with installation medium
+
+cryptsetup open /dev/sdX2 cryptlvm
+
+mount /dev/volgroup0/lv_root /mnt
+
+mkdir /mnt/boot /mnt/home /mnt/usr /mnt/var
+
+mount /dev/sdX1 /mnt/boot
+mount /dev/volgroup0/lv_home /mnt/home
+mount /dev/volgroup0/lv_usr /mnt/usr
+mount /dev/volgroup0/lv_var /mnt/var
+
+swapon /dev/volgroup0/lv_swap
+
+[CHECK]
+lsblk -af
+
+arch-chroot /mnt
