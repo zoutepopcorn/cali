@@ -196,7 +196,140 @@ mount /dev/volgroup0/lv_var /mnt/var
 swapon /dev/volgroup0/lv_swap
 
 
-## >>>> goto '2 installation' below
+
+2 Installation
+
+2.1 [OPTION] Configure mirrorlist
+cd /etc/pacman.d
+cp mirrorlist mirrorlist.full
+rankmirrors -v -n 10 mirrorlist.full | grep -w 'Server =' > mirrorlist
+
+2.2 Install the base packages
+
+pacstrap -i /mnt base base-devel
+
+
+
+
+3 Configure the system
+
+>>>>3.9 Boot loader
+
+3.1 Fstab
+
+genfstab -L -p /mnt >> /mnt/etc/fstab
+
+# check if all the partitions are in /etc/fstab and if they are correct
+# on addition, this can be useful:
+      mount | grep sdY1 >> /mnt/etc/fstab
+
+with separate /usr partition:
+/etc/mkinitcpio.conf add HOOKS usr shutdown
+/etc/fstab fs_passno 0 on /usr (fsck /usr on boot)
+in case of systemd
+rd.luks.name=device-UUID=cryptlvm root=/dev/mapper/MyVol-root
+
+# record fstab entries
+cat /etc/fstab >> <install_note>
+
+# exit archiso environment and go to the arch-chroot environment
+
+3.2 Chroot
+
+arch-chroot /mnt
+
+3.3 Time zone
+
+ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
+
+hwclock --systohc
+
+3.4 Locale
+
+vi /etc/locale.gen
+:s/#en_US
+
+locale-gen
+
+vi /etc/locale.conf
+LANG=en_US.UTF-8
+
+3.5 Hostname
+
+echo <hostname> > /etc/hostname
+
+vi /etc/hosts
+127.0.0.1    localhost.localdomain    localhost
+::1    localhost.localdomain    localhost
+127.0.1.1     <system_name>.localdomain     <system_name>
+
+3.6 Root password
+
+#set password for root
+passwd
+
+# download and install additional packages
+pacman -Sy openssh linux-headers linux-lts linux-lts-headers wpa_supplicant wireless_tools
+
+3.7 Boot loader
+
+# install boot loader
+# creates /boot files
+bootctl install
+
+# [CHECK] bootloader settings with:
+bootctl status
+(! no entry suitable as default)
+
+# configure loader.conf
+# for boot (menu) configuration
+vi /boot/loader/loader.conf
+timeout 3
+default arch
+
+3.8 Initramfs
+
+# configuring mkinitcpio.conf, which is used to
+# create an initial ramdisk environment (initramfs)
+vi /etc/mkinitcpio.conf
+HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)
+>>>>in case of systemd:
+HOOKS=(base systemd autodetect keyboard sd-vconsole modconf block sd-encrypt sd-lvm2 filesystems fsck)
+/etc/vconsole.conf
+FONT=Lat2-Terminus16
+
+# configuring boot loader entries
+# a *.conf file for every kernel that is available
+vi /boot/loader/entries/arch.conf
+title Arch Linux Encrypted
+linux /vmlinuz-linux
+initrd /initramfs-linux.img
+options cryptdevice=[UUID=:lvm]/[/dev/sdY1:lvm] crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/volgroup0-lv_root resume=/dev/mapper/volgroup0-lv_swap
+rd.luks.name=device-UUID=cryptlvm root=/dev/mapper/MyVol-root
+# generate initramfs with mkinitcpio
+# for linux preset
+mkinitcpio -p linux
+
+# for linux-lts preset
+mkinitcpio -p linux-lts
+
+3.9 Exit chroot
+
+# exit arch-chroot environment and go back to the archiso environment
+
+4 Reboot
+
+exit
+
+umount -R /mnt
+
+# remove boot medium
+
+reboot
+
+
+##===================================
+
 
 
 # [OPTION] plain disk encryption
@@ -285,134 +418,6 @@ lsblk -af
 lsblk -af >> <install_note>
 
 
-
-
-2 Installation
-
-2.1 [OPTION] Configure mirrorlist
-cd /etc/pacman.d
-cp mirrorlist mirrorlist.full
-rankmirrors -v -n 10 mirrorlist.full | grep -w 'Server =' > mirrorlist
-
-2.2 Install the base packages
-
-pacstrap -i /mnt base base-devel
-
-
-
-
-3 Configure the system
-
->>>>3.9 Boot loader
-
-3.1 Fstab
-
-genfstab -L -p /mnt >> /mnt/etc/fstab
-
-# check if all the partitions are in /etc/fstab and if they are correct
-# on addition, this can be useful:
-      mount | grep sdY1 >> /mnt/etc/fstab
-
-with separate /usr partition:
-/etc/mkinitcpio.conf add HOOKS usr shutdown
-/etc/fstab fs_passno 0 on /usr (fsck /usr on boot)
-
-
-# record fstab entries
-cat /etc/fstab >> <install_note>
-
-# exit archiso environment and go to the arch-chroot environment
-
-3.2 Chroot
-
-arch-chroot /mnt
-
-3.3 Time zone
-
-ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
-
-hwclock --systohc
-
-3.4 Locale
-
-vi /etc/locale.gen
-:s/#en_US
-
-locale-gen
-
-vi /etc/locale.conf
-LANG=en_US.UTF-8
-
-3.5 Hostname
-
-echo <hostname> > /etc/hostname
-
-vi /etc/hosts
-127.0.0.1    localhost.localdomain    localhost
-::1    localhost.localdomain    localhost
-127.0.1.1     <system_name>.localdomain     <system_name>
-
-3.6 Root password
-
-#set password for root
-passwd
-
-# download and install additional packages
-pacman -Sy openssh linux-headers linux-lts linux-lts-headers wpa_supplicant wireless_tools
-
-3.7 Boot loader
-
-# install boot loader
-# creates /boot files
-bootctl install
-
-# [CHECK] bootloader settings with:
-bootctl status
-(! no entry suitable as default)
-
-# configure loader.conf
-# for boot (menu) configuration
-vi /boot/loader/loader.conf
-timeout 3
-default arch
-
-3.8 Initramfs
-
-# configuring mkinitcpio.conf, which is used to
-# create an initial ramdisk environment (initramfs)
-vi /etc/mkinitcpio.conf
-HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)
-
-# configuring boot loader entries
-# a *.conf file for every kernel that is available
-vi /boot/loader/entries/arch.conf
-title Arch Linux Encrypted
-linux /vmlinuz-linux
-initrd /initramfs-linux.img
-options cryptdevice=[UUID=:lvm]/[/dev/sdY1:lvm] crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/volgroup0-lv_root resume=/dev/mapper/volgroup0-lv_swap
-
-# generate initramfs with mkinitcpio
-# for linux preset
-mkinitcpio -p linux
-
-# for linux-lts preset
-mkinitcpio -p linux-lts
-
-3.9 Exit chroot
-
-# exit arch-chroot environment and go back to the archiso environment
-
-4 Reboot
-
-exit
-
-umount -R /mnt
-
-# remove boot medium
-
-reboot
-
-
 #------------------------
 
 additional comments:
@@ -459,9 +464,6 @@ HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck file
 cryptsetup open /dev/sdX2 cryptlvm
 
 mount /dev/volgroup0/lv_root /mnt
-
-mkdir /mnt/boot /mnt/home /mnt/usr /mnt/var
-
 mount /dev/sdX1 /mnt/boot
 mount /dev/volgroup0/lv_home /mnt/home
 mount /dev/volgroup0/lv_usr /mnt/usr
