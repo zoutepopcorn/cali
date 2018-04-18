@@ -186,10 +186,7 @@ mkswap -L SWAP /dev/mapper/volgroup0-lv_swap
 ## mount filesystem partitions
 mount /dev/volgroup0/lv_root /mnt
 
-mkdir /mnt/boot
-mkdir /mnt/home
-mkdir /mnt/usr
-mkdir /mnt/var
+mkdir /mnt/{boot,home,usr,var}
 
 mount /dev/sdY1 /mnt/boot
 mount /dev/volgroup0/lv_home /mnt/home
@@ -315,6 +312,11 @@ genfstab -L -p /mnt >> /mnt/etc/fstab
 # check if all the partitions are in /etc/fstab and if they are correct
 # on addition, this can be useful:
       mount | grep sdY1 >> /mnt/etc/fstab
+
+with separate /usr partition:
+/etc/mkinitcpio.conf add HOOKS usr shutdown
+/etc/fstab fs_passno 0 on /usr (fsck /usr on boot)
+
 
 # record fstab entries
 cat /etc/fstab >> <install_note>
