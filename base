@@ -269,13 +269,13 @@ vi /etc/hosts
 passwd
 
 # download and install additional packages
-pacman -Sy openssh linux-headers linux-lts linux-lts-headers wpa_supplicant wireless_tools
+pacman -Sy openssh linux-headers linux-lts linux-lts-headers wpa_supplicant wireless_tools vim
 
 3.7 Boot loader
 
 # install boot loader
 # creates /boot files
-bootctl install
+bootctl install --path=/boot
 
 # [CHECK] bootloader settings with:
 bootctl status
@@ -286,32 +286,35 @@ bootctl status
 vi /boot/loader/loader.conf
 timeout 3
 default arch
+editor 1
 
 3.8 Initramfs
 
 # configuring mkinitcpio.conf, which is used to
 # create an initial ramdisk environment (initramfs)
 vi /etc/mkinitcpio.conf
-HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)
->>>>in case of systemd:
+#HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 filesystems fsck) 
+
+MODULES=(nvme i915 intel_agp) (XPS9360)
 HOOKS=(base systemd autodetect keyboard sd-vconsole modconf block sd-encrypt sd-lvm2 filesystems fsck)
+
 /etc/vconsole.conf
+
 FONT=Lat2-Terminus16
 
 # configuring boot loader entries
 # a *.conf file for every kernel that is available
 vi /boot/loader/entries/arch.conf
-title Arch Linux Encrypted
-linux /vmlinuz-linux
-initrd /initramfs-linux.img
-options cryptdevice=[UUID=:lvm]/[/dev/sdY1:lvm] crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/volgroup0-lv_root resume=/dev/mapper/volgroup0-lv_swap
-rd.luks.name=device-UUID=cryptlvm root=/dev/mapper/MyVol-root
-# generate initramfs with mkinitcpio
-# for linux preset
-mkinitcpio -p linux
 
-# for linux-lts preset
-mkinitcpio -p linux-lts
+title Arch Linux
+linux /vmlinuz-linux
+initrd /intel-ucode.img
+initrd /initramfs-linux.img
+#options cryptdevice=[UUID=:lvm]/[/dev/sdY1:lvm] crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/volgroup0-lv_root resume=/dev/mapper/volgroup0-lv_swap
+options rd.luks.uuid=[UUID] rd.luks.name=[UUID]=cryptlvm root=/dev/mapper/volgroup0-lv_root rw resume=dev/mapper/volgroup0-lv_swap
+
+# generate initramfs with mkinitcpio
+mkinitcpio -p linux linux-lts
 
 3.9 Exit chroot
 
