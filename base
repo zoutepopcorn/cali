@@ -224,12 +224,9 @@ genfstab -L -p /mnt >> /mnt/etc/fstab
       mount | grep sdY1 >> /mnt/etc/fstab
 
 with separate /usr partition:
-/etc/mkinitcpio.conf add HOOKS usr shutdown
 /etc/fstab fs_passno 0 on /usr (fsck /usr on boot)
-in case of systemd
-rd.luks.name=device-UUID=cryptlvm root=/dev/mapper/MyVol-root
 
-# record fstab entries
+# [OPTION] record fstab entries
 cat /etc/fstab >> <install_note>
 
 # exit archiso environment and go to the arch-chroot environment
@@ -331,6 +328,8 @@ umount -R /mnt
 reboot
 
 
+##===================================
+##===================================
 ##===================================
 
 
