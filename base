@@ -63,10 +63,6 @@ curl -L https://mirror.i3d.net/pub/archlinux/iso/2018.04.01/archlinux-2018.04.01
 # list available layouts
 ls /usr/share/kbd/keymaps/**/*.map.gz
 
-# set console font
-# after internet connection setup terminus font can be installed
-# available fonts are in /usr/share/kbd/consolefonts/
-# set with setfont
 
 1.2 Verify the boot mode
 
@@ -119,12 +115,7 @@ ip a
 ping 8.8.8.8
 
 #check external network address
-curl ifconfig.me
-
-# [OPTION] download and set terminus font
-pacman -Sy terminus-font
-pacman -Ql terminus-font
-setfont ter-v32n
+curl ident.me
 
 1.4 Update the system clock
 
@@ -134,6 +125,20 @@ timedatectl set-timezone Europe/Amsterdam
 
 # [CHECK] service status
 timedatectl status
+
+# [OPTION] download and set console font
+# available fonts are in /usr/share/kbd/consolefonts/
+## install and configure terminus font
+pacman -Sy terminus-font
+pacman -Ql terminus-font
+
+# set font temporarily
+setfont ter-v32n
+
+# set font persistent
+/etc/vconsole.conf
+
+FONT=Lat2-Terminus16
 
 1.5 Partition the disks
 
@@ -293,10 +298,6 @@ vi /etc/mkinitcpio.conf
 
 MODULES=(nvme i915 intel_agp) (XPS9360)
 HOOKS=(base systemd autodetect keyboard sd-vconsole modconf block sd-encrypt sd-lvm2 filesystems fsck)
-
-/etc/vconsole.conf
-
-FONT=Lat2-Terminus16
 
 # configuring boot loader entries
 # a *.conf file for every kernel that is available
