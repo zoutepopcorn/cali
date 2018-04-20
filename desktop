@@ -77,7 +77,7 @@ sudo systemctl start bluetooth
 
 suckless dwm
 ----------------
-yaourt -Sy xorg xorg-xinit xterm
+yaourt -Sy xorg xorg-xinit xterm iw alsa-utils
 
 cd ~/src
 
