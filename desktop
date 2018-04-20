@@ -77,7 +77,30 @@ sudo systemctl start bluetooth
 
 suckless dwm
 ----------------
-yaourt -Sy xorg xorg-xinit xterm dwm st dmenu slock
+yaourt -Sy xorg xorg-xinit xterm
+
+cd ~/src
+git clone https://git.suckless.org/dwm
+git clone https://git.suckless.org/dmenu
+git clone https://git.suckless.org/st
+git clone https://git.suckless.org/slock
+
+cd ~/src/dwm
+edit config.mk
+sudo make clean install
+
+cd ~/src/dmenu
+edit config.mk
+sudo make clean install
+
+cd ~/src/st
+edit config.mk
+sudo make clean install
+
+cd ~/src/slock
+edit config.mk
+sudo make clean install
+
 echo 'xrandr --output eDP1 --scale 0.6x0.6' > ~/.xinitrc
 echo 'exec dwm' > ~/.xinitrc
 
