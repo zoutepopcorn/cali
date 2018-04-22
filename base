@@ -206,8 +206,8 @@ swapon /dev/volgroup0/lv_swap
 
 2.1 [OPTION] Configure mirrorlist
 cd /etc/pacman.d
-cp mirrorlist mirrorlist.full
-rankmirrors -v -n 10 mirrorlist.full | grep -w 'Server =' > mirrorlist
+cp mirrorlist mirrorlist.org
+rankmirrors -v -n 10 mirrorlist.org | grep -w 'Server =' > mirrorlist
 
 2.2 Install the base packages
 
