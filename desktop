@@ -1,5 +1,117 @@
 Install Desktop environment*
 
+suckless dwm
+----------------
+yaourt -Sy xorg xorg-xinit xterm iw alsa-utils
+
+cd ~/src
+
+git clone https://git.suckless.org/dwm
+cd ~/src/dwm
+edit config.mk
+sudo make clean install
+
+echo 'xrandr --output eDP1 --scale 0.6x0.6' > ~/.xinitrc
+echo 'exec dwm' > ~/.xinitrc
+
+git clone https://git.suckless.org/dmenu
+cd ~/src/dmenu
+edit config.mk
+sudo make clean install
+
+git clone https://git.suckless.org/st
+cd ~/src/st
+edit config.mk
+sudo make clean install
+
+git clone https://git.suckless.org/slock
+cd ~/src/slock
+edit config.mk
+sudo make clean install
+
+cd ~/src/dwm
+edit config.mk
+sudo make clean install
+
+# install fonts
+## inconsolata
+pacman -Sy ttf-inconsolata
+## libertine
+pacman -Sy ttf-linux-libertine
+# installs to: /usr/share/fonts/TTF
+# check if installed
+fc-list | grep -i inconsolata
+... further steps needed
+
+# backlight
+xbacklight -set 75
+xbacklight -inc 5
+xbacklight -dec 5
+
+# headphones:
+yay alsa-utils
+alsactl restore
+
+#audio volume:
+# set volume with amixer
+amixer set Master [0-65536]
+# volume up
+amixer set Master playback 5000+ unmute
+# volume down
+amixer set Master playback 5000- unmute
+# volume up
+amixer set Master playback 5%+ unmute
+# volume down
+amixer set Master playback 5%- unmute
+# toggle mute
+amixer set Master playback toggle
+# mute
+amixer set Master playback mute
+# unmute
+amixer set Master playback unmute
+
+""
+I use xbindkeys with my dedicated volume buttons to control the volume level.
+
+Create the file with gedit (or other text editor): /home/~/.xbindkeys.scm
+
+(xbindkey '("XF86AudioRaiseVolume") "amixer set Master 2dB+ unmute")
+(xbindkey '("XF86AudioLowerVolume") "amixer set Master 2dB- unmute")
+You need to see what keysym Fn + up-arrow and Fn + down-arrow produce with xev.
+You can change it if need be (if they don't currently produce
+XF86AudioRaiseVolume and XF86AudioLowerVolume) with /home/~/.xmodmap.
+""
+
+# update statusbar with
+# time
+# Statusbar loop
+while true; do
+   xsetroot -name "$( date +"%a %d %H:%M" )"
+   sleep 1m    # Update time every minute
+done &
+
+# conky
+(conky | while read LINE; do xsetroot -name "$LINE"; done) &
+
+# touchpad
+# identify touchpad device
+grep -e "Using input driver libinput" ~/.local/share/xorg/Xorg.0.log
+# create inputclass for tp
+sudo vim /etc/X11/xorg.conf.d/30-touchpad.conf
+
+section "InputClass"
+        Identifier "DLL075B:01 06CB:76AF Touchpad"
+        MatchIsTouchpad "on"
+        Driver "libinput"
+        Option "Tapping" "on"
+	Option "ClickMethod" "clickfinger"
+	Option "NaturalScrolling" "true"
+EndSection
+
+
+===========================================
+below is old
+
 the simple way with:
 
 yaourt -Sy gnome gnome-tweak-tool gnome-terminal-transparency
@@ -75,107 +187,3 @@ sudo systemctl start bluetooth
 
 ---------------------------------------------------------------------------------
 
-suckless dwm
-----------------
-yaourt -Sy xorg xorg-xinit xterm iw alsa-utils
-
-cd ~/src
-
-git clone https://git.suckless.org/dwm
-cd ~/src/dwm
-edit config.mk
-sudo make clean install
-
-echo 'xrandr --output eDP1 --scale 0.6x0.6' > ~/.xinitrc
-echo 'exec dwm' > ~/.xinitrc
-
-git clone https://git.suckless.org/dmenu
-cd ~/src/dmenu
-edit config.mk
-sudo make clean install
-
-git clone https://git.suckless.org/st
-cd ~/src/st
-edit config.mk
-sudo make clean install
-
-git clone https://git.suckless.org/slock
-cd ~/src/slock
-edit config.mk
-sudo make clean install
-
-cd ~/src/dwm
-edit config.mk
-sudo make clean install
-
-# install inconsolata:
-pacman -Sy ttf-inconsolata
-# it installs to: /usr/share/fonts/TTF
-# check if installed
-fc-list | grep -i inconsolata
-... further steps needed
-
-# backlight
-xbacklight -set 75
-xbacklight -inc 5
-xbacklight -dec 5
-
-# headphones:
-yay alsa-utils
-alsactl restore
-
-#audio volume:
-# set volume with amixer
-amixer set Master [0-65536]
-# volume up
-amixer set Master playback 5000+ unmute
-# volume down
-amixer set Master playback 5000- unmute
-# volume up
-amixer set Master playback 5%+ unmute
-# volume down
-amixer set Master playback 5%- unmute
-# toggle mute
-amixer set Master playback toggle
-# mute
-amixer set Master playback mute
-# unmute
-amixer set Master playback unmute
-
-""
-I use xbindkeys with my dedicated volume buttons to control the volume level.
-
-Create the file with gedit (or other text editor): /home/~/.xbindkeys.scm
-
-(xbindkey '("XF86AudioRaiseVolume") "amixer set Master 2dB+ unmute")
-(xbindkey '("XF86AudioLowerVolume") "amixer set Master 2dB- unmute")
-You need to see what keysym Fn + up-arrow and Fn + down-arrow produce with xev.
-You can change it if need be (if they don't currently produce
-XF86AudioRaiseVolume and XF86AudioLowerVolume) with /home/~/.xmodmap.
-""
-
-# update statusbar with
-# time
-# Statusbar loop
-while true; do
-   xsetroot -name "$( date +"%a %d %H:%M" )"
-   sleep 1m    # Update time every minute
-done &
-
-# conky
-(conky | while read LINE; do xsetroot -name "$LINE"; done) &
-
-# touchpad
-# identify touchpad device
-grep -e "Using input driver libinput" ~/.local/share/xorg/Xorg.0.log
-# create inputclass for tp
-sudo vim /etc/X11/xorg.conf.d/30-touchpad.conf
-
-section "InputClass"
-        Identifier "DLL075B:01 06CB:76AF Touchpad"
-        MatchIsTouchpad "on"
-        Driver "libinput"
-        Option "Tapping" "on"
-	Option "ClickMethod" "clickfinger"
-	Option "NaturalScrolling" "true"
-EndSection
