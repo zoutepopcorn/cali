@@ -2,7 +2,7 @@ Install Desktop environment*
 
 suckless dwm
 ----------------
-yaourt -Sy xorg xorg-xinit xterm iw alsa-utils
+yaourt -Sy xorg xorg-xinit xterm iw alsa-utils mesa xf86-video-nouveau
 
 cd ~/src
 
@@ -83,7 +83,7 @@ XF86AudioRaiseVolume and XF86AudioLowerVolume) with /home/~/.xmodmap.
 ""
 
 # update statusbar with
-# time
+# time6-video
 # Statusbar loop
 while true; do
    xsetroot -name "$( date +"%a %d %H:%M" )"
