@@ -138,7 +138,7 @@ setfont ter-v32n
 # set font persistent
 /etc/vconsole.conf
 
-FONT=Lat2-Terminus16
+FONT=ter-v32n
 
 1.5 Partition the disks
 
