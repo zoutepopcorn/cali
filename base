@@ -205,9 +205,18 @@ swapon /dev/volgroup0/lv_swap
 2 Installation
 
 2.1 [OPTION] Configure mirrorlist
-cd /etc/pacman.d
-cp mirrorlist mirrorlist.org
-rankmirrors -v -n 10 mirrorlist.org | grep -w 'Server =' > mirrorlist
+cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.org
+curl https://www.archlinux.org/mirrorlist/all/ > ~/mirrorlist.all
+
+# remove comments with vim (of course, what else?) to
+# activate all servers for rankmirrors' investigation
+vim ~/mirrorlist.all
+# keypress sequence in vim:
+gg C-v G x :wq
+
+rankmirrors -v -n 10 ~/mirrorlist.all | grep -w 'Server =' > ~/mirrorlist
+# ...
+sudo mv ~/mirrorlist /etc/pacman.d
 
 2.2 Install the base packages
 
