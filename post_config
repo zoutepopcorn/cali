@@ -11,19 +11,19 @@ exit
 
 login as cytopyge
 
-pacman -Sy git vim
+pacman -Sy yay git vim
 
 git clone https://aur.archlinux.org/package-query.git
 cd package-query
 makepkg -si
 cd ..
-git clone https://aur.archlinux.org/yaourt.git
-cd yaourt
+git clone https://aur.archlinux.org/yay.git
+cd yay
 makepkg -si
 cd
-rm -rf package-query yaourt
+rm -rf package-query yay
 
-# configure pacman
+## configure pacman
 vim /etc/pacman.conf
 
 #uncomment [multilib]
@@ -40,9 +40,10 @@ cd /etc/pacman.d
 sudo cp mirrorlist mirrorlist.org
 rankmirrors -n 10 mirrorlist.org | grep -w 'Server =' > mirrorlist
 
-yaourt -Sy yay linux-lts linux-lts-headers powerline powerline-fonts terminus-font \
-zsh zsh-completions tmux srm openssl openvpn bluez bluez-utils \
-iotop htop glances wavemon iftop wireshark-gtk ranger mupdf
+yay --show -w && yay -Syu yay git vim \
+linux-lts linux-lts-headers powerline powerline-fonts terminus-font \
+zsh zsh-completions srm openssl openvpn bluez bluez-utils \
+iotop htop glances wavemon iftop wireshark-gtk ranger mupdf feh
 
 # configuring z shell (zsh)
 # check the current default shell type:

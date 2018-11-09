@@ -1,12 +1,18 @@
-##~~~~~~~~~~~~~~~~~~~~~~~~~~
+##   __                                    
+##  / _| __ _  ___ __ _ _ __ ___ _   _ ___ 
+## | |_ / _` |/ __/ _` | '__/ __| | | / __|
+## |  _| (_| | (_| (_| | | | (__| |_| \__ \
+## |_|  \__,_|\___\__,_|_|  \___|\__,_|___/
+##                                         
 ## facarcus 
 ## arch installation script
-## by cytopyge
-##~~~~~~~~~~~~~~~~~~~~~~~~~~
+## (c) 2018 by cytopyge
+##
+##
 ip a
 dhcpcd eno1
 lspci -k | grep 'Network controller'
-curl ident.me
+curl -4 https://ident.me
 pacman -Sy terminus-font
 pacman -Ql terminus-font
 setfont ter-v32n
