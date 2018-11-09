@@ -35,15 +35,25 @@ vim /etc/pacman.conf
 SigLevel = Never
 Server = http://repo.archlinux.fr/$arch
 
-#update mirrorlist
-cd /etc/pacman.d
-sudo cp mirrorlist mirrorlist.org
-rankmirrors -n 10 mirrorlist.org | grep -w 'Server =' > mirrorlist
+## update mirrorlist
+# cd to a save place
+cd ~/test
+# copy current mirrorlist
+sudo cp /etc/pacman.d/mirrorlist mirrorlist.bu
+# download newest complete mirrorlist
+curl -o mirrorlist.all https://www.archlinux.org/mirrorlist/all/
+# uncomment first character on all lines in mirrorlist.all
+sed -i 's/.//' mirrorlist.all
+# create new mirrorlist with top 10 fastest
+rankmirrors -n 10 mirrorlist.all | sudo grep -w 'Server =' > mirrorlist
+# copy mirrorlist with top 10
+sudo cp mirrorlist /etc/pacman.d/mirrorlist
 
+## download and install applications
 yay --show -w && yay -Syu yay git vim \
 linux-lts linux-lts-headers powerline powerline-fonts terminus-font \
 zsh zsh-completions srm openssl openvpn bluez bluez-utils \
-iotop htop glances wavemon iftop wireshark-gtk ranger mupdf feh
+iotop htop glances wavemon iftop wireshark-gtk ranger feh mupdf zathura
 
 # configuring z shell (zsh)
 # check the current default shell type:
