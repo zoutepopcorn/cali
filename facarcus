@@ -1,88 +1,204 @@
-##   __                                    
-##  / _| __ _  ___ __ _ _ __ ___ _   _ ___ 
-## | |_ / _` |/ __/ _` | '__/ __| | | / __|
-## |  _| (_| | (_| (_| | | | (__| |_| \__ \
-## |_|  \__,_|\___\__,_|_|  \___|\__,_|___/
-##                                         
-## facarcus 
-## arch installation script
-## (c) 2018 by cytopyge
+#!/bin/bash
+#
+##    __                                    
+###  / _| __ _  ___ __ _ _ __ ___ _   _ ___ 
+### | |_ / _` |/ __/ _` | '__/ __| | | / __|
+### |  _| (_| | (_| (_| | | | (__| |_| \__ \
+### |_|  \__,_|\___\__,_|_|  \___|\__,_|___/
+###                                         
+### facarcus 
+### arch installation script
+### (c) 2018 by cytopyge
+###
 ##
-##
-ip a
-dhcpcd eno1
+#
+
+# network setup
+#
+## get network interface
+i=$(ip -o -4 route show to default | awk '{print $5}')
+
+## connect to network interface
+dhcpcd $i
+
+## handy tools
 lspci -k | grep 'Network controller'
 curl -4 https://ident.me
+
+# set font
+#
+## download terminus-font
 pacman -Sy terminus-font
+## install terminus-font
 pacman -Ql terminus-font
+## set terminus-font
 setfont ter-v32n
+
+# set time
+#
+## network time protocol
 timedatectl set-ntp true
+## timezone
 timedatectl set-timezone Europe/Amsterdam
+## verify
 timedatectl status
-gdisk /dev/sdX
->>>partition 1 512M ef00 (EFI System)
->>>partition 2 rest 8e00 (Linux LVM)
-cryptsetup luksFormat --type luks2 /dev/sdX2
-cryptsetup open /dev/sdX2 cryptlvm
+
+# device partitioning
+lsblk
+echo 'partition 1 512M ef00 (EFI System)'
+echo 'partition 2 rest 8e00 (Linux LVM)'
+echo 'enter device (/dev/sd.)?'
+read part
+gdisk /dev/sd"$part"
+
+# cryptsetup
+## dialog
+lsblk
+echo 'cryptsetup is about to start'
+echo 'lvm volumes are being created'
+echo '/dev/sd"$part" has to be at least 164 GB'
+echo -n 'continue? (Y/n)'
+read lvm_continue
+
+if [[ $lvm_continue == "Y" || $lvm_continue == "y" || $lvm_continue = "" ]]; then
+        # default option
+	# lvm continue positive
+	echo 'encrypt partition and create lvm volumes'
+else
+	# lvm continue negative
+	echo 'really exit? (y/N)'
+	read lvm_continue_exit_confirm
+
+	if [[ $lvm_continue_exit_confirm == "N" || $lvm_continue_exit_confirm == "n" || $lvm_continue_exit_confirm = "" ]]; then
+		# default option
+        	# lvm exit confirmation negative
+		# [TODO] do nothing
+		:
+	else
+		# lvm exit confirmation positive
+		echo 'exiting ...'
+		#exit
+	fi
+fi
+
+## cryptsetup on designated partition
+cryptsetup luksFormat --type luks2 /dev/sd"$part"2
+cryptsetup open /dev/sd"$part"2 cryptlvm
+
+# creating lvm volumes with lvm
+## create physical volume with lvm
 pvcreate /dev/mapper/cryptlvm
+
+## create volumegroup vg0 with lvm
 vgcreate vg0 /dev/mapper/cryptlvm
+
+## create logical volumes
 lvcreate -L 40G vg0 -n lv_root
 lvcreate -L 40G vg0 -n lv_home
 lvcreate -L 40G vg0 -n lv_usr
 lvcreate -L 40G vg0 -n lv_var
 lvcreate -L 4G vg0 -n lv_swap
-mkfs.vfat -F 32 -n BOOT /dev/sdY1
+
+## make filesystems
+mkfs.vfat -F 32 -n BOOT /dev/sd"$part"1
 mkfs.ext4 -L ROOT /dev/mapper/vg0-lv_root
 mkfs.ext4 -L HOME /dev/mapper/vg0-lv_home
 mkfs.ext4 -L USR /dev/mapper/vg0-lv_usr
 mkfs.ext4 -L VAR /dev/mapper/vg0-lv_var
 mkswap -L SWAP /dev/mapper/vg0-lv_swap
+
+## create mountpoints 
 mount /dev/vg0/lv_root /mnt
 mkdir /mnt/boot
 mkdir /mnt/home
 mkdir /mnt/usr
 mkdir /mnt/var
->>>mount /dev/sdY1 /mnt/boot
+
+## mount partitions
+mount /dev/sd"$part"1 /mnt/boot
 mount /dev/vg0/lv_home /mnt/home
 mount /dev/vg0/lv_usr /mnt/usr
 mount /dev/vg0/lv_var /mnt/var
 swapon /dev/vg0/lv_swap
+
+## update mirrorlist
 cd /etc/pacman.d
 cp mirrorlist mirrorlist.full
 rankmirrors -v -n 10 mirrorlist.full | grep -w 'Server =' > mirrorlist
+
+## pacstrap
 pacstrap -i /mnt base base-devel
+
+## generate fstab
 genfstab -L -p /mnt >> /mnt/etc/fstab
+
+## arch-chroot
 arch-chroot /mnt
+
+## time settings
 ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
 hwclock --systohc
 sed -i '1ien_US.UTF-8' /etc/locale.gen
 locale-gen
 sed -i '1iLANG=en_US.UTF-8' /etc/locale.conf
->>>echo <hostname> > /etc/hostname
+
+## network configuration
+## create the hostname file
+echo -n 'Enter hostname?'
+read hostname
+touch /etc/hostname
+echo "$hostname" >> /etc/$hostname
+## add matching entries to hosts file
 echo '127.0.0.1    localhost.localdomain    localhost' >> /etc/hosts
 echo '::1    localhost.localdomain    localhost' >> /etc/hosts
-echo '127.0.1.1     <system_name>.localdomain     <system_name>' >> /etc/hosts
+echo '127.0.1.1     "$hostname".localdomain     "$hostname"' >> /etc/hosts
+
+## set root password
 passwd
-pacman -Sy openssh linux-headers linux-lts linux-lts-headers wpa_supplicant wireless_tools
+
+## update repositories and install core applications
+pacman -Sy openssh linux-headers linux-lts linux-lts-headers wpa_supplicant wireless_tools xclip
+
+# installing the EFI boot manager
+## install boot files
 bootctl install
+## [OPTION] check boot status
 bootctl status
-# for boot (menu) configuration
-echo 'timeout 3' > /boot/loader/loader.conf
+## bootloader configuration
+touch /boot/loader/loader.conf
 echo 'default arch' >> /boot/loader/loader.conf
+echo 'timeout 3' >> /boot/loader/loader.conf
+echo 'console-mode max' >> /boot/loader/loader.conf
 
-3.8 Initramfs
-
+# 3.8 Initramfs
 # configuring mkinitcpio.conf, which is used to
 # create an initial ramdisk environment (initramfs)
-vi /etc/mkinitcpio.conf
-HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)
+echo 'HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)' | xclip -selection clipboard -rmlastnl
 
-# configuring boot loader entries
+
+[HIER GEBLEVEN]
+
+
+REPLACE HOOKS WITH SED OR AWK
+HOOKS=
+with
+HOOKS=(base udev autodetect modconf keyboard keymap block encrypt lvm2 filesystems fsck)
+vi /etc/mkinitcpio.conf
+
+# adding bootloader entries
 # a *.conf file for every kernel that is available
+## bleeding edge kernel
 vi /boot/loader/entries/arch.conf
-title Arch Linux Encrypted
+title Arch Linux BLE
 linux /vmlinuz-linux
 initrd /initramfs-linux.img
+options cryptdevice=[UUID=:lvm]/[/dev/sdY1:lvm] crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/volgroup0-lv_root resume=/dev/mapper/volgroup0-lv_swap
+
+## lts kernel
+vi /boot/loader/entries/lts.conf
+title Arch Linux LTS
+linux /vmlinuz-linux-lts
+initrd /initramfs-linux-lts.img
 options cryptdevice=[UUID=:lvm]/[/dev/sdY1:lvm] crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/volgroup0-lv_root resume=/dev/mapper/volgroup0-lv_swap
 
 # generate initramfs with mkinitcpio
