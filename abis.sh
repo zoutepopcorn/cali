@@ -109,11 +109,11 @@ pvcreate /dev/mapper/cryptlvm
 vgcreate vg0 /dev/mapper/cryptlvm
 
 ## create logical volumes
-lvcreate -L $root_sizeG vg0 -n lv_root
-lvcreate -L $home_sizeG vg0 -n lv_home
-lvcreate -L $var_sizeG vg0 -n lv_usr
-lvcreate -L $usr_sizeG vg0 -n lv_var
-lvcreate -L $swap_sizeG vg0 -n lv_swap
+lvcreate -L "$root_size"G vg0 -n lv_root
+lvcreate -L "$home_size"G vg0 -n lv_home
+lvcreate -L "$var_size"G vg0 -n lv_usr
+lvcreate -L "$usr_size"G vg0 -n lv_var
+lvcreate -L "$swap_size"G vg0 -n lv_swap
 
 ## make filesystems
 mkfs.vfat -F 32 -n BOOT /dev/sd"$part"1
@@ -139,6 +139,7 @@ swapon /dev/vg0/lv_swap
 
 ## update mirrorlist
 cd /etc/pacman.d
+wget -O mirrorlist https://www.archlinux.org/mirrorlist/all
 cp mirrorlist mirrorlist.full
 rankmirrors -v -n 10 mirrorlist.full | grep -w 'Server =' > mirrorlist
 
