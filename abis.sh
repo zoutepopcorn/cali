@@ -59,17 +59,20 @@ gdisk /dev/sd"$part"
 ## dialog
 lsblk
 echo 'cryptsetup is about to start'
-echo 'lvm volumes ROOT, HOME, VAR and USR are being created'
-echo 'ROOT partition size? (GB)'
+echo 'lvm volumes ROOT, HOME, VAR, USR & SWAP are being created'
+echo -n 'ROOT partition size? (GB)'
 read root_size
-echo 'HOME partition size (GB)?'
+echo -n 'HOME partition size (GB)?'
 read home_size
-echo 'VAR partition size (GB)?'
+echo -n 'VAR partition size (GB)?'
 read var_size
-echo 'USR partition size (GB)?'
+echo -n 'USR partition size (GB)?'
 read usr_size
-total_size=$((root_size + home_size + var_size + usr_size + 4))
-echo '/dev/sd"$part" has to be at least $(total_size) GB'
+echo -n 'SWAP partition size (GB)?'
+read swap_size
+total_size=$(echo $(( root_size + home_size + var_size + usr_size + 4 )))
+echo $total_size
+echo "/dev/sd"$part" has to be at least $total_size GB"
 echo -n 'continue? (Y/n)'
 read lvm_continue
 
@@ -106,11 +109,11 @@ pvcreate /dev/mapper/cryptlvm
 vgcreate vg0 /dev/mapper/cryptlvm
 
 ## create logical volumes
-lvcreate -L 40G vg0 -n lv_root
-lvcreate -L 40G vg0 -n lv_home
-lvcreate -L 40G vg0 -n lv_usr
-lvcreate -L 40G vg0 -n lv_var
-lvcreate -L 4G vg0 -n lv_swap
+lvcreate -L $root_sizeG vg0 -n lv_root
+lvcreate -L $home_sizeG vg0 -n lv_home
+lvcreate -L $var_sizeG vg0 -n lv_usr
+lvcreate -L $usr_sizeG vg0 -n lv_var
+lvcreate -L $swap_sizeG vg0 -n lv_swap
 
 ## make filesystems
 mkfs.vfat -F 32 -n BOOT /dev/sd"$part"1
