@@ -139,8 +139,9 @@ swapon /dev/vg0/lv_swap
 
 ## update mirrorlist
 cd /etc/pacman.d
-wget -O mirrorlist https://www.archlinux.org/mirrorlist/all
+wget -O mirrorlist https://www.archlinux.org/mirrorlist/all/
 cp mirrorlist mirrorlist.full
+sed -i 's/^.//' mirrorlist
 rankmirrors -v -n 10 mirrorlist.full | grep -w 'Server =' > mirrorlist
 
 ## pacstrap
