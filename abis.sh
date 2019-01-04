@@ -36,7 +36,7 @@ pacman -Sy terminus-font
 ## install terminus-font
 pacman -Ql terminus-font
 ## set terminus-font
-setfont ter-v32n
+setfont ter-v14n
 
 # set time
 #
@@ -59,8 +59,17 @@ gdisk /dev/sd"$part"
 ## dialog
 lsblk
 echo 'cryptsetup is about to start'
-echo 'lvm volumes are being created'
-echo '/dev/sd"$part" has to be at least 164 GB'
+echo 'lvm volumes ROOT, HOME, VAR and USR are being created'
+echo 'ROOT partition size? (GB)'
+read root_size
+echo 'HOME partition size (GB)?'
+read home_size
+echo 'VAR partition size (GB)?'
+read var_size
+echo 'USR partition size (GB)?'
+read usr_size
+total_size=$((root_size + home_size + var_size + usr_size + 4))
+echo '/dev/sd"$part" has to be at least $(total_size) GB'
 echo -n 'continue? (Y/n)'
 read lvm_continue
 
