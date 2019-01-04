@@ -1,14 +1,18 @@
 #!/bin/bash
 #
-##    __                                    
-###  / _| __ _  ___ __ _ _ __ ___ _   _ ___ 
-### | |_ / _` |/ __/ _` | '__/ __| | | / __|
-### |  _| (_| | (_| (_| | | | (__| |_| \__ \
-### |_|  \__,_|\___\__,_|_|  \___|\__,_|___/
-###                                         
-### facarcus 
-### arch installation script
-### (c) 2018 by cytopyge
+##
+###        _     _     
+###   __ _| |__ (_)___ 
+###  / _` | '_ \| / __|
+### | (_| | |_) | \__ \
+###  \__,_|_.__/|_|___/
+###  _ _|_ _ ._    _  _  
+### (_\/|_(_)|_)\/(_|(/_ 
+###   /      |  /  _|                     
+###
+### abis
+### arch base installation script
+### (c) 2019 by cytopyge
 ###
 ##
 #
@@ -22,8 +26,8 @@ i=$(ip -o -4 route show to default | awk '{print $5}')
 dhcpcd $i
 
 ## handy tools
-lspci -k | grep 'Network controller'
-curl -4 https://ident.me
+## lspci -k | grep 'Network controller'
+## curl -4 https://ident.me
 
 # set font
 #
@@ -170,36 +174,27 @@ echo 'default arch' >> /boot/loader/loader.conf
 echo 'timeout 3' >> /boot/loader/loader.conf
 echo 'console-mode max' >> /boot/loader/loader.conf
 
-# 3.8 Initramfs
+## 3.8 Initramfs
 # configuring mkinitcpio.conf, which is used to
 # create an initial ramdisk environment (initramfs)
-echo 'HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)' | xclip -selection clipboard -rmlastnl
-
-
-[HIER GEBLEVEN]
-
-
-REPLACE HOOKS WITH SED OR AWK
-HOOKS=
-with
-HOOKS=(base udev autodetect modconf keyboard keymap block encrypt lvm2 filesystems fsck)
-vi /etc/mkinitcpio.conf
+# replace HOOKS
+sed -i "/^HOOKS/c\HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)" /etc/mkinitcpio.conf
 
 # adding bootloader entries
 # a *.conf file for every kernel that is available
 ## bleeding edge kernel
-vi /boot/loader/entries/arch.conf
-title Arch Linux BLE
-linux /vmlinuz-linux
-initrd /initramfs-linux.img
-options cryptdevice=[UUID=:lvm]/[/dev/sdY1:lvm] crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/volgroup0-lv_root resume=/dev/mapper/volgroup0-lv_swap
+touch /boot/loader/entries/arch.conf
+echo 'title Arch Linux BLE' >> /boot/loader/entries/arch.conf
+echo 'linux /vmlinuz-linux' >> /boot/loader/entries/arch.conf
+echo 'initrd /initramfs-linux.img' >> /boot/loader/entries/arch.conf
+echo 'options cryptdevice=[UUID=:lvm]/[/dev/sd"$part"1:lvm] crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/volgroup0-lv_root resume=/dev/mapper/volgroup0-lv_swap' >> /boot/loader/entries/arch.conf
 
 ## lts kernel
-vi /boot/loader/entries/lts.conf
-title Arch Linux LTS
-linux /vmlinuz-linux-lts
-initrd /initramfs-linux-lts.img
-options cryptdevice=[UUID=:lvm]/[/dev/sdY1:lvm] crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/volgroup0-lv_root resume=/dev/mapper/volgroup0-lv_swap
+touch /boot/loader/entries/lts.conf
+echo 'title Arch Linux LTS' >> /boot/loader/entries/arch.conf
+echo 'linux /vmlinuz-linux-lts' >> /boot/loader/entries/arch.conf
+echo 'initrd /initramfs-linux-lts.img' >> /boot/loader/entries/arch.conf
+echo 'options cryptdevice=[UUID=:lvm]/[/dev/sd"$part"1:lvm] crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/volgroup0-lv_root resume=/dev/mapper/volgroup0-lv_swap' >> /boot/loader/entries/arch.conf
 
 # generate initramfs with mkinitcpio
 # for linux preset
@@ -208,78 +203,80 @@ mkinitcpio -p linux
 # for linux-lts preset
 mkinitcpio -p linux-lts
 
-3.9 Exit chroot
-
+## 3.9 Exit chroot
 # exit arch-chroot environment and go back to the archiso environment
-
-4 Reboot
 
 exit
 
+## 4 Reboot
+
 umount -R /mnt
 
+lsblk
+echo 'Remove boot medium'
+read -n 1 -s -r -p "Press any key to continue ..."
 # remove boot medium
 
 reboot
 
 
-#------------------------
-
-additional comments:
-
-mkinitcpio -p linux-lts
-
-#in the fstab options for 'BOOT'; replace 'rw' with 'ro'
-#when the kernel is updated remount boot partition read/write:
-
-sudo mount -o remount,rw /dev/sdY1 /boot
-
-#read only:
-sudo mount -o remount,ro /dev/sdY1 /boot
-
-# for linux-lts preset
-# do this always separate from the linux preset!!
-# check location of /boot
-lsblk -af
-# remount /boot rw
-sudo mount -o remount,rw /dev/sda1 /boot
-# configure arch-lts.conf (see above)
-# generate
-mkinitcpio -v -p linux-lts
-
-# [OPTION] LUKS 
-#--------------------
-vi /
-boot/loader/entries/
-arch.conf
-'title Arch Linux Encrypted
-linux /vmlinuz-linux
-initrd /initramfs-linux.img
-options cryptdevice=UUID=<UUID>:<mapped-name> root=/dev/mapper/<mapped-name> quiet rw'
-
-# configuring mkinitcpio.conf
-# create initramfs
-vi /etc/mkinitcpio.conf
-HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)
-
-## [ERROR] on boot:
-##--------------------
-## reboot with installation medium
-
-cryptsetup open /dev/sdX2 cryptlvm
-
-mount /dev/volgroup0/lv_root /mnt
-
-mkdir /mnt/boot /mnt/home /mnt/usr /mnt/var
-
-mount /dev/sdX1 /mnt/boot
-mount /dev/volgroup0/lv_home /mnt/home
-mount /dev/volgroup0/lv_usr /mnt/usr
-mount /dev/volgroup0/lv_var /mnt/var
-
-swapon /dev/volgroup0/lv_swap
-
-[CHECK]
-lsblk -af
-
-arch-chroot /mnt
+#### #------------------------
+#### 
+#### additional comments:
+#### 
+#### mkinitcpio -p linux-lts
+#### 
+#### #in the fstab options for 'BOOT'; replace 'rw' with 'ro'
+#### #when the kernel is updated remount boot partition read/write:
+#### 
+#### sudo mount -o remount,rw /dev/sdY1 /boot
+#### 
+#### #read only:
+#### sudo mount -o remount,ro /dev/sdY1 /boot
+#### 
+#### # for linux-lts preset
+#### # do this always separate from the linux preset!!
+#### # check location of /boot
+#### lsblk -af
+#### # remount /boot rw
+#### sudo mount -o remount,rw /dev/sda1 /boot
+#### # configure arch-lts.conf (see above)
+#### # generate
+#### mkinitcpio -v -p linux-lts
+#### 
+#### # [OPTION] LUKS 
+#### #--------------------
+#### vi /
+#### boot/loader/entries/
+#### arch.conf
+#### 'title Arch Linux Encrypted
+#### linux /vmlinuz-linux
+#### initrd /initramfs-linux.img
+#### options cryptdevice=UUID=<UUID>:<mapped-name> root=/dev/mapper/<mapped-name> quiet rw'
+#### 
+#### # configuring mkinitcpio.conf
+#### # create initramfs
+#### vi /etc/mkinitcpio.conf
+#### HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)
+#### 
+#### ## [ERROR] on boot:
+#### ##--------------------
+#### ## reboot with installation medium
+#### 
+#### cryptsetup open /dev/sdX2 cryptlvm
+#### 
+#### mount /dev/volgroup0/lv_root /mnt
+#### 
+#### mkdir /mnt/boot /mnt/home /mnt/usr /mnt/var
+#### 
+#### mount /dev/sdX1 /mnt/boot
+#### mount /dev/volgroup0/lv_home /mnt/home
+#### mount /dev/volgroup0/lv_usr /mnt/usr
+#### mount /dev/volgroup0/lv_var /mnt/var
+#### 
+#### swapon /dev/volgroup0/lv_swap
+#### 
+#### [CHECK]
+#### lsblk -af
+#### 
+#### arch-chroot /mnt
