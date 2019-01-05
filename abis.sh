@@ -138,11 +138,13 @@ mount /dev/vg0/lv_var /mnt/var
 swapon /dev/vg0/lv_swap
 
 ## update mirrorlist
+pacman -S rankmirrors
 cd /etc/pacman.d
-wget -O mirrorlist https://www.archlinux.org/mirrorlist/all/
-cp mirrorlist mirrorlist.full
-sed -i 's/^.//' mirrorlist
-rankmirrors -v -n 10 mirrorlist.full | grep -w 'Server =' > mirrorlist
+wget -O mirrorlist.all https://www.archlinux.org/mirrorlist/all/
+wget -O mirrorlist.nl https://www.archlinux.org/mirrorlist/?country=NL&protocol=http&protocol=https&ip_version=4
+cp mirrorlist.nl mirrorlist.rank
+sed -i 's/^.//' mirrorlist.rank
+rankmirrors -v -n 10 mirrorlist.rank | grep -w 'Server =' > mirrorlist
 
 ## pacstrap
 pacstrap -i /mnt base base-devel
