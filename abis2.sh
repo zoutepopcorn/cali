@@ -69,19 +69,21 @@ echo 'console-mode max' >> /boot/loader/loader.conf
 # replace HOOKS
 sed -i "/^HOOKS/c\HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)" /etc/mkinitcpio.conf
 
+boot_part=$(findmnt | grep /boot | awk '{print $2}')
+
 # adding bootloader entries
 # a *.conf file for every kernel that is available
 ## bleeding edge kernel
 echo 'title Arch Linux BLE' > /boot/loader/entries/arch.conf
 echo 'linux /vmlinuz-linux' >> /boot/loader/entries/arch.conf
 echo 'initrd /initramfs-linux.img' >> /boot/loader/entries/arch.conf
-echo 'options cryptdevice=[UUID=:lvm]/[/dev/sd"$part"1:lvm] crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/volgroup0-lv_root resume=/dev/mapper/volgroup0-lv_swap' >> /boot/loader/entries/arch.conf
+echo 'options cryptdevice=[UUID=:lvm]/["$boot_part":lvm] crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/volgroup0-lv_root resume=/dev/mapper/volgroup0-lv_swap' >> /boot/loader/entries/arch.conf
 
 ## lts kernel
 echo 'title Arch Linux LTS' > /boot/loader/entries/arch-lts.conf
 echo 'linux /vmlinuz-linux-lts' >> /boot/loader/entries/arch-lts.conf
 echo 'initrd /initramfs-linux-lts.img' >> /boot/loader/entries/arch-lts.conf
-echo 'options cryptdevice=[UUID=:lvm]/[/dev/sd"$part"1:lvm] crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/volgroup0-lv_root resume=/dev/mapper/volgroup0-lv_swap' >> /boot/loader/entries/arch-lts.conf
+echo 'options cryptdevice=[UUID=:lvm]/["$boot_part":lvm] crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/volgroup0-lv_root resume=/dev/mapper/volgroup0-lv_swap' >> /boot/loader/entries/arch-lts.conf
 
 # generate initramfs with mkinitcpio
 # for linux preset

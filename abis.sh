@@ -152,10 +152,12 @@ pacstrap -i /mnt base base-devel
 ## generate fstab
 genfstab -L -p /mnt >> /mnt/etc/fstab
 
-echo 'continue?'
-read break_point
+echo 'manually do:'
+echo 'arch-chroot /mnt'
+echo 'install git andclone abis in the new environment'
+echo 'then run abis2'
 
-#[TODO] until here the script works fine
+exit
 
 ## arch-chroot
 arch-chroot /mnt
