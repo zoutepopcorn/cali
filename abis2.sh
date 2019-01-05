@@ -78,10 +78,10 @@ echo 'initrd /initramfs-linux.img' >> /boot/loader/entries/arch.conf
 echo 'options cryptdevice=[UUID=:lvm]/[/dev/sd"$part"1:lvm] crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/volgroup0-lv_root resume=/dev/mapper/volgroup0-lv_swap' >> /boot/loader/entries/arch.conf
 
 ## lts kernel
-echo 'title Arch Linux LTS' > /boot/loader/entries/arch.conf
-echo 'linux /vmlinuz-linux-lts' >> /boot/loader/entries/arch.conf
-echo 'initrd /initramfs-linux-lts.img' >> /boot/loader/entries/arch.conf
-echo 'options cryptdevice=[UUID=:lvm]/[/dev/sd"$part"1:lvm] crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/volgroup0-lv_root resume=/dev/mapper/volgroup0-lv_swap' >> /boot/loader/entries/arch.conf
+echo 'title Arch Linux LTS' > /boot/loader/entries/arch-lts.conf
+echo 'linux /vmlinuz-linux-lts' >> /boot/loader/entries/arch-lts.conf
+echo 'initrd /initramfs-linux-lts.img' >> /boot/loader/entries/arch-lts.conf
+echo 'options cryptdevice=[UUID=:lvm]/[/dev/sd"$part"1:lvm] crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/volgroup0-lv_root resume=/dev/mapper/volgroup0-lv_swap' >> /boot/loader/entries/arch-lts.conf
 
 # generate initramfs with mkinitcpio
 # for linux preset
