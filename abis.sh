@@ -152,6 +152,11 @@ pacstrap -i /mnt base base-devel
 ## generate fstab
 genfstab -L -p /mnt >> /mnt/etc/fstab
 
+echo 'continue?'
+read break_point
+
+#[TODO] until here the script works fine
+
 ## arch-chroot
 arch-chroot /mnt
 
