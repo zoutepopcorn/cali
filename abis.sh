@@ -32,11 +32,11 @@ dhcpcd $i
 # set font
 #
 ## download terminus-font
-pacman -Sy terminus-font
+#pacman -Sy terminus-font
 ## install terminus-font
-pacman -Ql terminus-font
+#pacman -Ql terminus-font
 ## set terminus-font
-setfont ter-v14n
+#setfont ter-v14n
 
 # set time
 #
