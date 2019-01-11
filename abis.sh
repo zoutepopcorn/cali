@@ -51,7 +51,7 @@ timedatectl status
 lsblk
 echo 'partition 1 512M ef00 (EFI System)'
 echo 'partition 2 rest 8e00 (Linux LVM)'
-echo 'enter device (/dev/sd.)?'
+echo 'enter device (/dev/sd.) ?'
 read part
 gdisk /dev/sd"$part"
 
@@ -60,20 +60,20 @@ gdisk /dev/sd"$part"
 lsblk
 echo 'cryptsetup is about to start'
 echo 'lvm volumes ROOT, HOME, VAR, USR & SWAP are being created'
-echo -n 'ROOT partition size? (GB)'
+echo -n 'ROOT partition size (GB)? '
 read root_size
-echo -n 'HOME partition size (GB)?'
+echo -n 'HOME partition size (GB)? '
 read home_size
-echo -n 'VAR partition size (GB)?'
+echo -n 'VAR partition size (GB)? '
 read var_size
-echo -n 'USR partition size (GB)?'
+echo -n 'USR partition size (GB)? '
 read usr_size
-echo -n 'SWAP partition size (GB)?'
+echo -n 'SWAP partition size (GB)? '
 read swap_size
 total_size=$(echo $(( root_size + home_size + var_size + usr_size + 4 )))
 echo $total_size
 echo "/dev/sd"$part" has to be at least $total_size GB"
-echo -n 'continue? (Y/n)'
+echo -n 'continue? (Y/n) '
 read lvm_continue
 
 if [[ $lvm_continue == "Y" || $lvm_continue == "y" || $lvm_continue = "" ]]; then
@@ -82,7 +82,7 @@ if [[ $lvm_continue == "Y" || $lvm_continue == "y" || $lvm_continue = "" ]]; the
 	echo 'encrypt partition and create lvm volumes'
 else
 	# lvm continue negative
-	echo 'really exit? (y/N)'
+	echo 'really exit? (y/N) '
 	read lvm_continue_exit_confirm
 
 	if [[ $lvm_continue_exit_confirm == "N" || $lvm_continue_exit_confirm == "n" || $lvm_continue_exit_confirm = "" ]]; then
@@ -183,7 +183,7 @@ echo '127.0.1.1     "$hostname".localdomain     "$hostname"' >> /etc/hosts
 passwd
 
 ## update repositories and install core applications
-pacman -Sy openssh linux-headers linux-lts linux-lts-headers wpa_supplicant wireless_tools xclip git
+pacman -Sy openssh linux-headers linux-lts linux-lts-headers wpa_supplicant wireless_tools xclip git --noconfirm
 
 # installing the EFI boot manager
 ## install boot files
@@ -207,13 +207,13 @@ sed -i "/^HOOKS/c\HOOKS=(base udev autodetect modconf block keyboard keymap encr
 echo 'title Arch Linux BLE' > /boot/loader/entries/arch.conf
 echo 'linux /vmlinuz-linux' >> /boot/loader/entries/arch.conf
 echo 'initrd /initramfs-linux.img' >> /boot/loader/entries/arch.conf
-echo 'options cryptdevice=/dev/sd"$part"1:lvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/volgroup0-lv_root resume=/dev/mapper/volgroup0-lv_swap' >> /boot/loader/entries/arch.conf
+echo 'options cryptdevice=/dev/sd"$part"1:lvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root resume=/dev/mapper/vg0-lv_swap' >> /boot/loader/entries/arch.conf
 
 ## lts kernel
 echo 'title Arch Linux LTS' > /boot/loader/entries/arch.conf
 echo 'linux /vmlinuz-linux-lts' >> /boot/loader/entries/arch.conf
 echo 'initrd /initramfs-linux-lts.img' >> /boot/loader/entries/arch.conf
-echo 'options cryptdevice=/dev/sd"$part"1:lvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/volgroup0-lv_root resume=/dev/mapper/volgroup0-lv_swap' >> /boot/loader/entries/arch.conf
+echo 'options cryptdevice=/dev/sd"$part"1:lvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root resume=/dev/mapper/vg0-lv_swap' >> /boot/loader/entries/arch.conf
 
 # generate initramfs with mkinitcpio
 # for linux preset
