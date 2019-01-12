@@ -51,7 +51,7 @@ echo '127.0.1.1     "$hostname".localdomain     "$hostname"' >> /etc/hosts
 passwd
 
 ## update repositories and install core applications
-pacman -Sy openssh linux-headers linux-lts linux-lts-headers wpa_supplicant wireless_tools xclip
+pacman -Sy openssh linux-headers linux-lts linux-lts-headers wpa_supplicant wireless_tools xclip --noconfirm
 
 # installing the EFI boot manager
 ## install boot files
@@ -73,12 +73,12 @@ boot_part=$(findmnt | grep /boot | awk '{print $2}')
 
 # adding bootloader entries
 # a *.conf file for every kernel that is available
+# [TODO] UUID
 ## bleeding edge kernel
 echo 'title Arch Linux BLE' > /boot/loader/entries/arch.conf
 echo 'linux /vmlinuz-linux' >> /boot/loader/entries/arch.conf
 echo 'initrd /initramfs-linux.img' >> /boot/loader/entries/arch.conf
 echo "options cryptdevice="$part"2:lvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root resume=/dev/mapper/vg0-lv_swap" >> /boot/loader/entries/arch.conf
-#[TODO] UUID
 
 ## lts kernel
 echo 'title Arch Linux LTS' > /boot/loader/entries/arch-lts.conf
@@ -96,18 +96,18 @@ mkinitcpio -p linux-lts
 ## 3.9 Exit chroot
 # exit arch-chroot environment and go back to the archiso environment
 
-exit
+echo 'exit'
 
 ## 4 Reboot
 
-umount -R /mnt
+echo 'umount -R /mnt'
 
-lsblk
+lsblk -paf
 echo 'Remove boot medium'
-read -n 1 -s -r -p "Press any key to continue ..."
+#read -n 1 -s -r -p "Press any key to continue ..."
 # remove boot medium
 
-reboot
+echo 'reboot'
 
 
 #### #------------------------
