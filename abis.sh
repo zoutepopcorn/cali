@@ -124,7 +124,7 @@ mkfs.ext4 -L VAR /dev/mapper/vg0-lv_var
 mkswap -L SWAP /dev/mapper/vg0-lv_swap
 
 ## create mountpoints 
-mount /dev/vg0-lv_root /mnt
+mount /dev/mapper/vg0-lv_root /mnt
 mkdir /mnt/boot
 mkdir /mnt/home
 mkdir /mnt/usr
