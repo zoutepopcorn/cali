@@ -69,7 +69,17 @@ echo 'console-mode max' >> /boot/loader/loader.conf
 # replace HOOKS
 sed -i "/^HOOKS/c\HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)" /etc/mkinitcpio.conf
 
-boot_part=$(findmnt | grep /boot | awk '{print $2}')
+
+#[TODO] #remove after debugging
+cat /etc/mkinitcpio.conf | grep HOOKS
+echo 'check for correct HOOKS'
+read w4it
+echo 'check for partition cryptdevice (/dev/sd?2)'
+lsblk -paf
+read w4it
+
+
+#boot_part=$(findmnt | grep /boot | awk '{print $2}')
 
 # adding bootloader entries
 # a *.conf file for every kernel that is available
