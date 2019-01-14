@@ -211,13 +211,13 @@ sed -i "/^HOOKS/c\HOOKS=(base udev autodetect modconf block keyboard keymap encr
 echo 'title Arch Linux BLE' > /boot/loader/entries/arch.conf
 echo 'linux /vmlinuz-linux' >> /boot/loader/entries/arch.conf
 echo 'initrd /initramfs-linux.img' >> /boot/loader/entries/arch.conf
-echo 'options cryptdevice=/dev/sd"$part"1:lvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root resume=/dev/mapper/vg0-lv_swap' >> /boot/loader/entries/arch.conf
+echo 'options cryptdevice=/dev/sd"$part"2:lvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root resume=/dev/mapper/vg0-lv_swap' >> /boot/loader/entries/arch.conf
 
 ## lts kernel
 echo 'title Arch Linux LTS' > /boot/loader/entries/arch.conf
 echo 'linux /vmlinuz-linux-lts' >> /boot/loader/entries/arch.conf
 echo 'initrd /initramfs-linux-lts.img' >> /boot/loader/entries/arch.conf
-echo 'options cryptdevice=/dev/sd"$part"1:lvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root resume=/dev/mapper/vg0-lv_swap' >> /boot/loader/entries/arch.conf
+echo 'options cryptdevice=/dev/sd"$part"2:lvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root resume=/dev/mapper/vg0-lv_swap' >> /boot/loader/entries/arch.conf
 
 # generate initramfs with mkinitcpio
 # for linux preset
