@@ -70,12 +70,12 @@ echo 'console-mode max' >> /boot/loader/loader.conf
 sed -i "/^HOOKS/c\HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)" /etc/mkinitcpio.conf
 
 
-# designate lvmcrypt cryptdevice
-blkid | grep cryptlvm | awk '{print $2}'
-lsblk -paf
-echo
-echo 'enter full cryptlvm partition (/dev/sdXY) '
-read crypt_dev
+## designate lvmcrypt cryptdevice
+#blkid | grep cryptlvm | awk '{print $2}'
+#lsblk -paf
+#echo
+#echo 'enter full cryptlvm partition (/dev/sdXY) '
+#read crypt_dev
 
 
 #boot_part=$(findmnt | grep /boot | awk '{print $2}')
