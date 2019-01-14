@@ -226,6 +226,10 @@ mkinitcpio -p linux
 # for linux-lts preset
 mkinitcpio -p linux-lts
 
+# write install device to root
+# [TEST]
+echo "/dev/sd"$part"" > /mnt/inst_part.txt
+
 ## 3.9 Exit chroot
 # exit arch-chroot environment and go back to the archiso environment
 
