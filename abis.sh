@@ -155,6 +155,7 @@ pacstrap -i /mnt base base-devel
 
 ## generate fstab
 genfstab -L -p /mnt >> /mnt/etc/fstab
+vi /mnt/etc/fstab
 
 
 # write install device to root
