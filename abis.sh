@@ -132,12 +132,12 @@ mkdir /mnt/var
 
 ## mount partitions
 mount /dev/sd"$part"1 /mnt/boot
-mount /dev/vg0-lv_home /mnt/home
-mount /dev/vg0-lv_usr /mnt/usr
-mount /dev/vg0-lv_var /mnt/var
-swapon /dev/vg0-lv_swap
+mount /dev/mapper/vg0-lv_home /mnt/home
+mount /dev/mapper/vg0-lv_usr /mnt/usr
+mount /dev/mapper/vg0-lv_var /mnt/var
+swapon /dev/mapper/vg0-lv_swap
 
-#[TODO] 
+#[TODO] #remove after debugging
 findmnt
 read w4it
 
