@@ -124,7 +124,7 @@ mkfs.ext4 -L VAR /dev/mapper/vg0-lv_var
 mkswap -L SWAP /dev/mapper/vg0-lv_swap
 
 ## create mountpoints 
-mount /dev/vg0/lv_root /mnt
+mount /dev/vg0-lv_root /mnt
 mkdir /mnt/boot
 mkdir /mnt/home
 mkdir /mnt/usr
@@ -132,10 +132,14 @@ mkdir /mnt/var
 
 ## mount partitions
 mount /dev/sd"$part"1 /mnt/boot
-mount /dev/vg0/lv_home /mnt/home
-mount /dev/vg0/lv_usr /mnt/usr
-mount /dev/vg0/lv_var /mnt/var
-swapon /dev/vg0/lv_swap
+mount /dev/vg0-lv_home /mnt/home
+mount /dev/vg0-lv_usr /mnt/usr
+mount /dev/vg0-lv_var /mnt/var
+swapon /dev/vg0-lv_swap
+
+#[TODO] 
+findmnt
+read w4it
 
 ## update mirrorlist
 #pacman -S rankmirrors
