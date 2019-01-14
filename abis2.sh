@@ -70,13 +70,11 @@ echo 'console-mode max' >> /boot/loader/loader.conf
 sed -i "/^HOOKS/c\HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)" /etc/mkinitcpio.conf
 
 
-#[TODO] #remove after debugging
-cat /etc/mkinitcpio.conf | grep HOOKS
-echo 'check for correct HOOKS'
-read w4it
-echo 'check for partition cryptdevice (/dev/sd?2)'
+# designate lvmcrypt cryptdevice
 lsblk -paf
-read w4it
+echo
+echo 'enter full cryptlvm partition (/dev/sdXY) '
+read crypt_dev
 
 
 #boot_part=$(findmnt | grep /boot | awk '{print $2}')
@@ -88,13 +86,13 @@ read w4it
 echo 'title Arch Linux BLE' > /boot/loader/entries/arch.conf
 echo 'linux /vmlinuz-linux' >> /boot/loader/entries/arch.conf
 echo 'initrd /initramfs-linux.img' >> /boot/loader/entries/arch.conf
-echo "options cryptdevice="$part"2:lvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root resume=/dev/mapper/vg0-lv_swap" >> /boot/loader/entries/arch.conf
+echo "options cryptdevice="$crypt_dev":cryptlvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root resume=/dev/mapper/vg0-lv_swap" >> /boot/loader/entries/arch.conf
 
 ## lts kernel
 echo 'title Arch Linux LTS' > /boot/loader/entries/arch-lts.conf
 echo 'linux /vmlinuz-linux-lts' >> /boot/loader/entries/arch-lts.conf
 echo 'initrd /initramfs-linux-lts.img' >> /boot/loader/entries/arch-lts.conf
-echo "options cryptdevice="$part"2:lvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root resume=/dev/mapper/vg0-lv_swap" >> /boot/loader/entries/arch-lts.conf
+echo "options cryptdevice="$crypt_dev":cryptlvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root resume=/dev/mapper/vg0-lv_swap" >> /boot/loader/entries/arch-lts.conf
 
 # generate initramfs with mkinitcpio
 # for linux preset
@@ -112,10 +110,7 @@ echo 'exit'
 
 echo 'umount -R /mnt'
 
-lsblk -paf
 echo 'Remove boot medium'
-#read -n 1 -s -r -p "Press any key to continue ..."
-# remove boot medium
 
 echo 'reboot'
 

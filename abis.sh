@@ -156,6 +156,14 @@ pacstrap -i /mnt base base-devel
 ## generate fstab
 genfstab -L -p /mnt >> /mnt/etc/fstab
 
+
+# write install device to root
+# [TODO] # test if this works
+echo "/dev/sd"$part"" > /mnt/inst_dev.txt
+
+ls /mnt
+echo
+
 echo 'arch-chroot /mnt'
 echo 'pacman -Sy git --noconfirm'
 echo 'git clone https://github.com/cytopyge/arch_installation'
@@ -163,90 +171,91 @@ echo 'sh /arch_installation/abis2.sh'
 
 exit
 
-## arch-chroot
-arch-chroot /mnt
 
-## time settings
-ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
-hwclock --systohc
-sed -i "/^#en_US.UTF-8 UTF-8/c\en_US.UTF-8 UTF-8" /etc/locale.gen
-locale-gen
-echo 'LANG=en_US.UTF-8' > /etc/locale.conf
-
-## network configuration
-## create the hostname file
-echo -n 'Enter hostname?'
-read hostname
-echo "$hostname" > /etc/$hostname
-## add matching entries to hosts file
-echo '127.0.0.1    localhost.localdomain    localhost' >> /etc/hosts
-echo '::1    localhost.localdomain    localhost' >> /etc/hosts
-echo '127.0.1.1     "$hostname".localdomain     "$hostname"' >> /etc/hosts
-
-## set root password
-passwd
-
-## update repositories and install core applications
-pacman -Sy openssh linux-headers linux-lts linux-lts-headers wpa_supplicant wireless_tools xclip git --noconfirm
-
-# installing the EFI boot manager
-## install boot files
-bootctl install
-## [OPTION] check boot status
-bootctl status
-## bootloader configuration
-echo 'default arch' > /boot/loader/loader.conf
-echo 'timeout 3' >> /boot/loader/loader.conf
-echo 'console-mode max' >> /boot/loader/loader.conf
-
-## 3.8 Initramfs
-# configuring mkinitcpio.conf, which is used to
-# create an initial ramdisk environment (initramfs)
-# replace HOOKS
-sed -i "/^HOOKS/c\HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)" /etc/mkinitcpio.conf
-
-# adding bootloader entries
-# a *.conf file for every kernel that is available
-## bleeding edge kernel
-echo 'title Arch Linux BLE' > /boot/loader/entries/arch.conf
-echo 'linux /vmlinuz-linux' >> /boot/loader/entries/arch.conf
-echo 'initrd /initramfs-linux.img' >> /boot/loader/entries/arch.conf
-echo 'options cryptdevice=/dev/sd"$part"2:cryptlvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root resume=/dev/mapper/vg0-lv_swap' >> /boot/loader/entries/arch.conf
-
-## lts kernel
-echo 'title Arch Linux LTS' > /boot/loader/entries/arch_lts.conf
-echo 'linux /vmlinuz-linux-lts' >> /boot/loader/entries/arch_lts.conf
-echo 'initrd /initramfs-linux-lts.img' >> /boot/loader/entries/arch_lts.conf
-echo 'options cryptdevice=/dev/sd"$part"2:cryptlvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root resume=/dev/mapper/vg0-lv_swap' >> /boot/loader/entries/arch_lts.conf
-
-# generate initramfs with mkinitcpio
-# for linux preset
-mkinitcpio -p linux
-
-# for linux-lts preset
-mkinitcpio -p linux-lts
-
-# write install device to root
-# [TEST]
-echo "/dev/sd"$part"" > /mnt/inst_part.txt
-
-## 3.9 Exit chroot
-# exit arch-chroot environment and go back to the archiso environment
-
-exit
-
-## 4 Reboot
-
-umount -R /mnt
-
-lsblk
-echo 'Remove boot medium'
-read -n 1 -s -r -p "Press any key to continue ..."
-# remove boot medium
-
-reboot
-
-
+#--------------------------------------------------------------------------------
+####
+####
+###### arch-chroot
+####arch-chroot /mnt
+####
+###### time settings
+####ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
+####hwclock --systohc
+####sed -i "/^#en_US.UTF-8 UTF-8/c\en_US.UTF-8 UTF-8" /etc/locale.gen
+####locale-gen
+####echo 'LANG=en_US.UTF-8' > /etc/locale.conf
+####
+###### network configuration
+###### create the hostname file
+####echo -n 'Enter hostname?'
+####read hostname
+####echo "$hostname" > /etc/$hostname
+###### add matching entries to hosts file
+####echo '127.0.0.1    localhost.localdomain    localhost' >> /etc/hosts
+####echo '::1    localhost.localdomain    localhost' >> /etc/hosts
+####echo '127.0.1.1     "$hostname".localdomain     "$hostname"' >> /etc/hosts
+####
+###### set root password
+####passwd
+####
+###### update repositories and install core applications
+####pacman -Sy openssh linux-headers linux-lts linux-lts-headers wpa_supplicant wireless_tools xclip git --noconfirm
+####
+##### installing the EFI boot manager
+###### install boot files
+####bootctl install
+###### [OPTION] check boot status
+####bootctl status
+###### bootloader configuration
+####echo 'default arch' > /boot/loader/loader.conf
+####echo 'timeout 3' >> /boot/loader/loader.conf
+####echo 'console-mode max' >> /boot/loader/loader.conf
+####
+###### 3.8 Initramfs
+##### configuring mkinitcpio.conf, which is used to
+##### create an initial ramdisk environment (initramfs)
+##### replace HOOKS
+####sed -i "/^HOOKS/c\HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)" /etc/mkinitcpio.conf
+####
+##### adding bootloader entries
+##### a *.conf file for every kernel that is available
+###### bleeding edge kernel
+####echo 'title Arch Linux BLE' > /boot/loader/entries/arch.conf
+####echo 'linux /vmlinuz-linux' >> /boot/loader/entries/arch.conf
+####echo 'initrd /initramfs-linux.img' >> /boot/loader/entries/arch.conf
+####echo 'options cryptdevice=/dev/sd"$part"2:cryptlvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root resume=/dev/mapper/vg0-lv_swap' >> /boot/loader/entries/arch.conf
+####
+###### lts kernel
+####echo 'title Arch Linux LTS' > /boot/loader/entries/arch_lts.conf
+####echo 'linux /vmlinuz-linux-lts' >> /boot/loader/entries/arch_lts.conf
+####echo 'initrd /initramfs-linux-lts.img' >> /boot/loader/entries/arch_lts.conf
+####echo 'options cryptdevice=/dev/sd"$part"2:cryptlvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root resume=/dev/mapper/vg0-lv_swap' >> /boot/loader/entries/arch_lts.conf
+####
+##### generate initramfs with mkinitcpio
+##### for linux preset
+####mkinitcpio -p linux
+####
+##### for linux-lts preset
+####mkinitcpio -p linux-lts
+####
+####
+###### 3.9 Exit chroot
+##### exit arch-chroot environment and go back to the archiso environment
+####
+####exit
+####
+###### 4 Reboot
+####
+####umount -R /mnt
+####
+####lsblk
+####echo 'Remove boot medium'
+####read -n 1 -s -r -p "Press any key to continue ..."
+##### remove boot medium
+####
+####reboot
+####
+####
 #### #------------------------
 #### 
 #### additional comments:
