@@ -137,9 +137,6 @@ mount /dev/mapper/vg0-lv_usr /mnt/usr
 mount /dev/mapper/vg0-lv_var /mnt/var
 swapon /dev/mapper/vg0-lv_swap
 
-#[TODO] #remove after debugging
-findmnt
-read w4it
 
 ## update mirrorlist
 #pacman -S rankmirrors
@@ -160,7 +157,8 @@ vi /mnt/etc/fstab
 
 # write install device to root
 # [TODO] # test if this works
-echo "/dev/sd"$part"" > /mnt/inst_dev.txt
+#echo "/dev/sd"$part"" > /mnt/inst_dev.txt
+# commented out -> Using UUID via blkid in abis2
 
 ls /mnt
 echo

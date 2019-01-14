@@ -71,6 +71,7 @@ sed -i "/^HOOKS/c\HOOKS=(base udev autodetect modconf block keyboard keymap encr
 
 
 # designate lvmcrypt cryptdevice
+blkid | grep cryptlvm | awk '{print $2}'
 lsblk -paf
 echo
 echo 'enter full cryptlvm partition (/dev/sdXY) '
@@ -86,7 +87,8 @@ read crypt_dev
 echo 'title Arch Linux BLE' > /boot/loader/entries/arch.conf
 echo 'linux /vmlinuz-linux' >> /boot/loader/entries/arch.conf
 echo 'initrd /initramfs-linux.img' >> /boot/loader/entries/arch.conf
-echo "options cryptdevice="$crypt_dev":cryptlvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root resume=/dev/mapper/vg0-lv_swap" >> /boot/loader/entries/arch.conf
+#echo "options cryptdevice="$crypt_dev":cryptlvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root resume=/dev/mapper/vg0-lv_swap" >> /boot/loader/entries/arch.conf
+echo "options cryptdevice=`blkid | grep cryptlvm | awk '{print $2}'`:cryptlvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root resume=/dev/mapper/vg0-lv_swap" >> /boot/loader/entries/arch.conf
 
 ## lts kernel
 echo 'title Arch Linux LTS' > /boot/loader/entries/arch-lts.conf
