@@ -154,7 +154,7 @@ sed -i 's/^.//' mirrorlist.nl
 pacstrap -i /mnt base base-devel
 
 ## generate fstab
-genfstab -L -p /mnt >> /mnt/etc/fstab
+genfstab -U -p /mnt >> /mnt/etc/fstab
 vi /mnt/etc/fstab
 
 
