@@ -105,11 +105,19 @@ echo "options rd.luks.name=`blkid | grep crypto_LUKS | awk '{print $2}' | cut -d
 touch /etc/vconsole.conf
 
 # generate initramfs with mkinitcpio
-# for linux preset
+## for linux preset
 mkinitcpio -p linux
 
-# for linux-lts preset
+## for linux-lts preset
 mkinitcpio -p linux-lts
+
+# add user
+echo 'enter username? '
+read username
+useradd -m $username
+passwd $username
+
+echo "options rd.luks.name=`blkid | grep crypto_LUKS | awk '{print $2}' | cut -d'"' -f2`=cryptlvm root=/dev/mapper/vg0-lv_root rw resume=/dev/mapper/vg0-lv_swap" >> /boot/loader/entries/arch.conf
 
 ## 3.9 Exit chroot
 # exit arch-chroot environment and go back to the archiso environment
