@@ -69,7 +69,7 @@ echo 'console-mode max' >> /boot/loader/loader.conf
 # replace HOOKS
 #sed -i "/^HOOKS/c\HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)" /etc/mkinitcpio.conf
 ## systemd enabled
-sed -i "/^HOOKS/c\HOOKS=(base systemd autodetect modconf block keyboard sd-encrypt sd-vconsole sd-lvm2 fsck filesystems)" /etc/mkinitcpio.conf
+sed -i "/^HOOKS/c\HOOKS=(base systemd autodetect modconf block keyboard sd-vconsole sd-encrypt sd-lvm2 fsck filesystems)" /etc/mkinitcpio.conf
 
 ## designate lvmcrypt cryptdevice
 #blkid | grep cryptlvm | awk '{print $2}'
