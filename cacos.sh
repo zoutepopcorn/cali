@@ -1,20 +1,19 @@
 #!/bin/bash
 #
 ##
-###
-###        _     _         ____
-###   __ _| |__ (_)___    |___ \
-###  / _` | '_ \| / __|     __) |
-### | (_| | |_) | \__ \    / __/
-###  \__,_|_.__/|_|___/___|_____|
-###                  |_____|
+###                     
+### 
+###   ___ __ _  ___ ___  ___
+###  / __/ _` |/ __/ _ \/ __|
+### | (_| (_| | (_| (_) \__ \
+###  \___\__,_|\___\___/|___/ 2
 ###  _ _|_ _ ._    _  _  
 ### (_\/|_(_)|_)\/(_|(/_ 
 ###   /      |  /  _|                     
 ###
-### abis_2
-### arch base installation script_2
-### post arch-chroot
+### cacos
+### cytopyge arch configuration script
+### second part of a series
 ### (c) 2019 by cytopyge
 ###
 ##
@@ -22,11 +21,11 @@
 
 #
 ##
-## after executing abis in the new environment manually:
+## after executing cabis in the new environment manually:
 ## arch-chroot /mnt
 ## pacman -Sy git
 ## git clone https://github.com/cytopyge/arch_installation
-##sh arch_installation/abis.sh
+## sh arch_installation/cacos.sh
 ##
 #
 
