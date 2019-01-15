@@ -150,8 +150,12 @@ sed -i 's/^.//' mirrorlist.nl
 ## pacstrap
 pacstrap -i /mnt base base-devel
 
-## generate fstab
+# generate fstab
 genfstab -U -p /mnt >> /mnt/etc/fstab
+## fstab /usr entry with nopass 0
+### in order to be able 
+sed -i '/\/usr/s/.$/0/' /etc/fstab
+##[OPTION] manually check fstab in vi
 vi /mnt/etc/fstab
 
 
