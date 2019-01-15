@@ -154,9 +154,9 @@ pacstrap -i /mnt base base-devel
 genfstab -U -p /mnt >> /mnt/etc/fstab
 ## fstab /usr entry with nopass 0
 ### in order to be able 
-sed -i '/\/usr/s/.$/0/' /etc/fstab
+sed -i '/\/usr/s/.$/0/' /mnt/etc/fstab
 ##[OPTION] manually check fstab in vi
-vi /mnt/etc/fstab
+#vi /mnt/etc/fstab
 
 
 # write install device to root
