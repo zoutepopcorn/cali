@@ -67,7 +67,9 @@ echo 'console-mode max' >> /boot/loader/loader.conf
 # configuring mkinitcpio.conf, which is used to
 # create an initial ramdisk environment (initramfs)
 # replace HOOKS
-sed -i "/^HOOKS/c\HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)" /etc/mkinitcpio.conf
+#sed -i "/^HOOKS/c\HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)" /etc/mkinitcpio.conf
+## systemd enabled
+sed -i "/^HOOKS/c\HOOKS=(base systemd autodetect modconf block keyboard sd-encrypt sd-vconsole sd-lvm2 fsck filesystems)" /etc/mkinitcpio.conf
 
 ## designate lvmcrypt cryptdevice
 #blkid | grep cryptlvm | awk '{print $2}'
