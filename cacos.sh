@@ -1,8 +1,6 @@
 #!/bin/bash
 #
 ##
-###                     
-### 
 ###   ___ __ _  ___ ___  ___
 ###  / __/ _` |/ __/ _ \/ __|
 ### | (_| (_| | (_| (_) \__ \
@@ -21,7 +19,8 @@
 
 #
 ##
-## after executing cabis in the new environment manually:
+## run this script only after executing 
+## cabis in the new environment
 ## arch-chroot /mnt
 ## pacman -Sy git
 ## git clone https://github.com/cytopyge/arch_installation
@@ -29,14 +28,18 @@
 ##
 #
 
-## time settings
+# time settings
+## set time zone
 ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
+## set hwclock
 hwclock --systohc
+
+# locale settings
 sed -i "/^#en_US.UTF-8 UTF-8/c\en_US.UTF-8 UTF-8" /etc/locale.gen
 locale-gen
 echo 'LANG=en_US.UTF-8' > /etc/locale.conf
 
-## network configuration
+# network configuration
 ## create the hostname file
 echo -n 'Enter hostname? '
 read hostname
@@ -46,58 +49,36 @@ echo '127.0.0.1    localhost.localdomain    localhost' >> /etc/hosts
 echo '::1    localhost.localdomain    localhost' >> /etc/hosts
 echo '127.0.1.1     "$hostname".localdomain     "$hostname"' >> /etc/hosts
 
-## set root password
+# set root password
 passwd
 
-## update repositories and install core applications
-pacman -Sy openssh linux-headers linux-lts linux-lts-headers wpa_supplicant wireless_tools xclip --noconfirm
+# update repositories and install core applications
+pacman -Sy openssh linux-headers linux-lts linux-lts-headers wpa_supplicant wireless_tools xclip vim --noconfirm
 
 # installing the EFI boot manager
 ## install boot files
 bootctl install
-## [OPTION] check boot status
-bootctl status
-## bootloader configuration
+## boot loader configuration
 echo 'default arch' > /boot/loader/loader.conf
 echo 'timeout 3' >> /boot/loader/loader.conf
 echo 'console-mode max' >> /boot/loader/loader.conf
 
-## 3.8 Initramfs
-# configuring mkinitcpio.conf, which is used to
-# create an initial ramdisk environment (initramfs)
-# replace HOOKS
-#sed -i "/^HOOKS/c\HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)" /etc/mkinitcpio.conf
-## systemd enabled
+# configure mkinitcpio
+## create an initial ramdisk environment (initramfs)
+## enable systemd HOOKS
 sed -i "/^HOOKS/c\HOOKS=(base systemd autodetect keyboard sd-vconsole modconf block sd-encrypt sd-lvm2 filesystems fsck)" /etc/mkinitcpio.conf
 
-## designate lvmcrypt cryptdevice
-#blkid | grep cryptlvm | awk '{print $2}'
-#lsblk -paf
-#echo
-#echo 'enter full cryptlvm partition (/dev/sdXY) '
-#read crypt_dev
-
-
-#boot_part=$(findmnt | grep /boot | awk '{print $2}')
-
-# adding bootloader entries
-# a *.conf file for every kernel that is available
-# [TODO] UUID
+# adding boot loader entries
 ## bleeding edge kernel
 echo 'title Arch Linux BLE' > /boot/loader/entries/arch.conf
 echo 'linux /vmlinuz-linux' >> /boot/loader/entries/arch.conf
 echo 'initrd /initramfs-linux.img' >> /boot/loader/entries/arch.conf
-#echo "options cryptdevice="$crypt_dev":cryptlvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root resume=/dev/mapper/vg0-lv_swap" >> /boot/loader/entries/arch.conf
-#echo "options cryptdevice=`blkid | grep crypto_LUKS | awk '{print $2}' | sed 's/"//g'`:cryptlvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root rw resume=/dev/mapper/vg0-lv_swap" >> /boot/loader/entries/arch.conf
-#rd.luks
 echo "options rd.luks.name=`blkid | grep crypto_LUKS | awk '{print $2}' | cut -d'"' -f2`=cryptlvm root=/dev/mapper/vg0-lv_root rw resume=/dev/mapper/vg0-lv_swap" >> /boot/loader/entries/arch.conf
 
 ## lts kernel
 echo 'title Arch Linux LTS' > /boot/loader/entries/arch-lts.conf
 echo 'linux /vmlinuz-linux-lts' >> /boot/loader/entries/arch-lts.conf
 echo 'initrd /initramfs-linux-lts.img' >> /boot/loader/entries/arch-lts.conf
-#echo "options cryptdevice="$crypt_dev":cryptlvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root resume=/dev/mapper/vg0-lv_swap" >> /boot/loader/entries/arch-lts.conf
-#echo "options cryptdevice=`blkid | grep crypto_LUKS | awk '{print $2}' | sed 's/"//g'`:cryptlvm crypto=sha512:aes-xts-plain64:512:0: root=/dev/mapper/vg0-lv_root rw resume=/dev/mapper/vg0-lv_swap" >> /boot/loader/entries/arch-lts.conf
 echo "options rd.luks.name=`blkid | grep crypto_LUKS | awk '{print $2}' | cut -d'"' -f2`=cryptlvm root=/dev/mapper/vg0-lv_root rw resume=/dev/mapper/vg0-lv_swap" >> /boot/loader/entries/arch-lts.conf
 
 # default settings for sd-vconsole
@@ -120,14 +101,13 @@ passwd $username
 ## priviledge escalation for wheel group
 sed 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
-
-## 3.9 Exit chroot
-# exit arch-chroot environment and go back to the archiso environment
+# exit arch-chroot environment 
+## go back to the archiso environment
 
 echo 'exit'
 echo 'umount -R /mnt'
 echo 'Remove boot medium'
 
-## 4 Reboot
+## reboot
 echo 'reboot'
-echo 'abis
+echo 'run capos if preferred'

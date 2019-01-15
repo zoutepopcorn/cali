@@ -144,5 +144,5 @@ echo 'manually do:'
 echo 'arch-chroot /mnt'
 echo 'pacman -Sy git --noconfirm'
 echo 'git clone https://github.com/cytopyge/arch_installation'
-echo 'sh /arch_installation/abis2.sh'
+echo 'sh /arch_installation/cacos.sh'
 exit
