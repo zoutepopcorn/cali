@@ -112,84 +112,23 @@ mkinitcpio -p linux
 mkinitcpio -p linux-lts
 
 # add user
+## username
 echo 'enter username? '
 read username
-useradd -m $username
+useradd -m -g wheel $username
+## password
 passwd $username
+## priviledge escalation for wheel group
+sed 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
-echo "options rd.luks.name=`blkid | grep crypto_LUKS | awk '{print $2}' | cut -d'"' -f2`=cryptlvm root=/dev/mapper/vg0-lv_root rw resume=/dev/mapper/vg0-lv_swap" >> /boot/loader/entries/arch.conf
 
 ## 3.9 Exit chroot
 # exit arch-chroot environment and go back to the archiso environment
 
 echo 'exit'
-
-## 4 Reboot
-
 echo 'umount -R /mnt'
-
 echo 'Remove boot medium'
 
+## 4 Reboot
 echo 'reboot'
-
-
-#### #------------------------
-#### 
-#### additional comments:
-#### 
-#### mkinitcpio -p linux-lts
-#### 
-#### #in the fstab options for 'BOOT'; replace 'rw' with 'ro'
-#### #when the kernel is updated remount boot partition read/write:
-#### 
-#### sudo mount -o remount,rw /dev/sdY1 /boot
-#### 
-#### #read only:
-#### sudo mount -o remount,ro /dev/sdY1 /boot
-#### 
-#### # for linux-lts preset
-#### # do this always separate from the linux preset!!
-#### # check location of /boot
-#### lsblk -af
-#### # remount /boot rw
-#### sudo mount -o remount,rw /dev/sda1 /boot
-#### # configure arch-lts.conf (see above)
-#### # generate
-#### mkinitcpio -v -p linux-lts
-#### 
-#### # [OPTION] LUKS 
-#### #--------------------
-#### vi /
-#### boot/loader/entries/
-#### arch.conf
-#### 'title Arch Linux Encrypted
-#### linux /vmlinuz-linux
-#### initrd /initramfs-linux.img
-#### options cryptdevice=UUID=<UUID>:<mapped-name> root=/dev/mapper/<mapped-name> quiet rw'
-#### 
-#### # configuring mkinitcpio.conf
-#### # create initramfs
-#### vi /etc/mkinitcpio.conf
-#### HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 fsck filesystems)
-#### 
-#### ## [ERROR] on boot:
-#### ##--------------------
-#### ## reboot with installation medium
-#### 
-#### cryptsetup open /dev/sdX2 cryptlvm
-#### 
-#### mount /dev/volgroup0/lv_root /mnt
-#### 
-#### mkdir /mnt/boot /mnt/home /mnt/usr /mnt/var
-#### 
-#### mount /dev/sdX1 /mnt/boot
-#### mount /dev/volgroup0/lv_home /mnt/home
-#### mount /dev/volgroup0/lv_usr /mnt/usr
-#### mount /dev/volgroup0/lv_var /mnt/var
-#### 
-#### swapon /dev/volgroup0/lv_swap
-#### 
-#### [CHECK]
-#### lsblk -af
-#### 
-#### arch-chroot /mnt
+echo 'abis
