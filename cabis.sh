@@ -31,16 +31,20 @@ timedatectl set-ntp true
 timedatectl set-timezone Europe/Amsterdam
 ## verify
 timedatectl status
+echo
 
 # device partitioning
 ## lsblk for human
 lsblk
+echo
 ## info for human
 echo 'create new GPT (with <o>)'
 echo 'partition 1 512M ef00 (EFI System)'
 echo 'partition 2 rest 8e00 (Linux LVM)'
 echo 'enter device (/dev/sd.) ?'
 read part
+echo "partitioning /dev/sd"$part""
+echo
 gdisk /dev/sd"$part"
 
 # cryptsetup
