@@ -19,11 +19,16 @@
 ##
 #
 
+# clear screen
+clear
+echo
+
 # network setup
 ## get network interface
 i=$(ip -o -4 route show to default | awk '{print $5}')
 ## connect to network interface
 dhcpcd $i
+echo
 
 # set time
 ## network time protocol
@@ -36,12 +41,13 @@ echo
 
 # device partitioning
 ## lsblk for human
-lsblk
+lsblk -pf
 echo
 ## create boot partition
 ## info for human
 echo 'boot partition ef00 (EFI System)'
 echo 'recommended size at least 256M'
+echo
 echo 'create new GUID partition table with <o>'
 echo 'create new EFI System partition with <n>'
 echo 'write changes to device with <w>'
@@ -52,11 +58,12 @@ echo -n 'enter full path of the boot device (/dev/sdX) '
 read boot_part
 echo "partitioning "$boot_part"..."
 echo
-gdisk $boot_part
+gdisk "$boot_part"
 
 ## info for human
 echo 'lvm partition 8e00 (Linux LVM)'
 echo 'recommended size at least 16G'
+echo
 echo 'create new GUID partition table with <o>'
 echo 'create new Logical Volume Manager (LVM) partition with <n>'
 echo 'write changes to device with <w>'
@@ -67,11 +74,11 @@ echo -n 'enter full path of the lvm device (/dev/sdY) '
 read part
 echo "partitioning "$lvm_part"..."
 echo
-gdisk $lvm_part
+gdisk "$lvm_part"
 
 # cryptsetup
 ## dialog
-lsblk
+lsblk -pf
 echo 'cryptsetup is about to start'
 echo 'within the encrypted lvm volumegroup the logical volumes'
 echo 'ROOT, HOME, VAR, USR & SWAP are being created'
