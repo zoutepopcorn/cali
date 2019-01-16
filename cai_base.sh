@@ -55,10 +55,10 @@ echo 'exit gdisk with <q>'
 echo
 ## request boot device path
 echo -n 'enter full path of the boot device (/dev/sdX) '
-read boot_part
-echo "partitioning "$boot_part"..."
+read boot_dev
+echo "partitioning "$boot_dev"..."
 echo
-gdisk "$boot_part"
+gdisk "$boot_dev"
 
 ## info for human
 echo 'lvm partition 8e00 (Linux LVM)'
@@ -71,7 +71,7 @@ echo 'exit gdisk with <q>'
 echo
 ## request lvm device path
 echo -n 'enter full path of the lvm device (/dev/sdY) '
-read part
+read lvm_part
 echo "partitioning "$lvm_part"..."
 echo
 gdisk "$lvm_part"
@@ -79,6 +79,13 @@ gdisk "$lvm_part"
 # cryptsetup
 ## dialog
 lsblk -pf
+echo
+echo -n 'enter full path of the BOOT partition (/dev/sdXn) '
+read boot_part
+echo
+echo -n 'enter full path of the LVM partition (/dev/sdYm) '
+read lvm_part
+echo
 echo 'cryptsetup is about to start'
 echo 'within the encrypted lvm volumegroup the logical volumes'
 echo 'ROOT, HOME, VAR, USR & SWAP are being created'
@@ -121,8 +128,8 @@ else
 fi
 
 # cryptsetup on designated partition
-cryptsetup luksFormat --type luks2 "$lvm_part"2
-cryptsetup open "$lvm_part"2 cryptlvm
+cryptsetup luksFormat --type luks2 "$lvm_part"
+cryptsetup open "$lvm_part" cryptlvm
 
 # creating lvm volumes with lvm
 ## create physical volume with lvm
@@ -136,7 +143,7 @@ lvcreate -L "$var_size"G vg0 -n lv_usr
 lvcreate -L "$usr_size"G vg0 -n lv_var
 lvcreate -L "$swap_size"G vg0 -n lv_swap
 ## make filesystems
-mkfs.vfat -F 32 -n BOOT "$boot_part"1
+mkfs.vfat -F 32 -n BOOT "$boot_part"
 mkfs.ext4 -L ROOT /dev/mapper/vg0-lv_root
 mkfs.ext4 -L HOME /dev/mapper/vg0-lv_home
 mkfs.ext4 -L USR /dev/mapper/vg0-lv_usr
@@ -149,7 +156,7 @@ mkdir /mnt/home
 mkdir /mnt/usr
 mkdir /mnt/var
 ## mount partitions
-mount "$boot_part"1 /mnt/boot
+mount "$boot_part" /mnt/boot
 mount /dev/mapper/vg0-lv_home /mnt/home
 mount /dev/mapper/vg0-lv_usr /mnt/usr
 mount /dev/mapper/vg0-lv_var /mnt/var
