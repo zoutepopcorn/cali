@@ -60,6 +60,10 @@ echo "partitioning "$boot_dev"..."
 echo
 gdisk "$boot_dev"
 
+## lsblk for human
+lsblk -pf
+echo
+## create lvm partition
 ## info for human
 echo 'lvm partition 8e00 (Linux LVM)'
 echo 'recommended size at least 16G'
