@@ -142,11 +142,11 @@ sed -i '/\/boot/s/rw,/ro,/' /mnt/etc/fstab
 ## fstab /usr mount as ro
 sed -i '/\/usr/s/rw,/ro,/' /mnt/etc/fstab
 
-# final manual section
+# preparing /mnt environment
 echo
-echo 'manually do:'
-echo 'arch-chroot /mnt'
-echo 'pacman -Sy git --noconfirm'
-echo 'git clone https://github.com/cytopyge/arch_installation'
-echo 'sh /arch_installation/cacos.sh'
-exit
+arch-chroot /mnt pacman -Sy git --noconfirm
+arch-chroot /mnt git clone https://github.com/cytopyge/arch_installation
+echo 'changing root'
+echo 'to continue execute manually:'
+echo 'sh arch_installation/cacos.sh'
+arch-chroot /mnt
