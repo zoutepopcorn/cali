@@ -69,17 +69,17 @@ echo 'console-mode max' >> /boot/loader/loader.conf
 sed -i "/^HOOKS/c\HOOKS=(base systemd autodetect keyboard sd-vconsole modconf block sd-encrypt sd-lvm2 filesystems fsck)" /etc/mkinitcpio.conf
 
 # adding boot loader entries
-## bleeding edge kernel
+## bleeding edge kernel (BLE)
 echo 'title Arch Linux BLE' > /boot/loader/entries/arch.conf
 echo 'linux /vmlinuz-linux' >> /boot/loader/entries/arch.conf
 echo 'initrd /initramfs-linux.img' >> /boot/loader/entries/arch.conf
-echo "options rd.luks.name=`blkid | grep crypto_LUKS | awk '{print $2}' | cut -d'"' -f2`=cryptlvm root=/dev/mapper/vg0-lv_root rw resume=/dev/mapper/vg0-lv_swap" >> /boot/loader/entries/arch.conf
+echo "options rd.luks.name=UUID=`blkid | grep crypto_LUKS | awk '{print $2}' | cut -d '"' -f2`=cryptlvm root=UUID=`blkid | grep lv_root | awk '{print $3}' | cut -d '"' -f2` rw resume=UUID=`blkid | grep lv_swap | awk '{print $3}' | cut -d '"' -f2`" >> /boot/loader/entries/arch.conf
 
-## lts kernel
+## long term support kernel (LTS)
 echo 'title Arch Linux LTS' > /boot/loader/entries/arch-lts.conf
 echo 'linux /vmlinuz-linux-lts' >> /boot/loader/entries/arch-lts.conf
 echo 'initrd /initramfs-linux-lts.img' >> /boot/loader/entries/arch-lts.conf
-echo "options rd.luks.name=`blkid | grep crypto_LUKS | awk '{print $2}' | cut -d'"' -f2`=cryptlvm root=/dev/mapper/vg0-lv_root rw resume=/dev/mapper/vg0-lv_swap" >> /boot/loader/entries/arch-lts.conf
+echo "options rd.luks.name=UUID=`blkid | grep crypto_LUKS | awk '{print $2}' | cut -d '"' -f2`=cryptlvm root=UUID=`blkid | grep lv_root | awk '{print $3}' | cut -d '"' -f2` rw resume=UUID=`blkid | grep lv_swap | awk '{print $3}' | cut -d '"' -f2`" >> /boot/loader/entries/arch-lts.conf
 
 # default settings for sd-vconsole
 touch /etc/vconsole.conf
@@ -99,7 +99,7 @@ useradd -m -g wheel $username
 ## password
 passwd $username
 ## priviledge escalation for wheel group
-sed 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
+sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
 # exit arch-chroot environment 
 ## go back to the archiso environment
