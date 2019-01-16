@@ -73,13 +73,13 @@ sed -i "/^HOOKS/c\HOOKS=(base systemd autodetect keyboard sd-vconsole modconf bl
 echo 'title Arch Linux BLE' > /boot/loader/entries/arch.conf
 echo 'linux /vmlinuz-linux' >> /boot/loader/entries/arch.conf
 echo 'initrd /initramfs-linux.img' >> /boot/loader/entries/arch.conf
-echo "options rd.luks.name=UUID=`blkid | grep crypto_LUKS | awk '{print $2}' | cut -d '"' -f2`=cryptlvm root=UUID=`blkid | grep lv_root | awk '{print $3}' | cut -d '"' -f2` rw resume=UUID=`blkid | grep lv_swap | awk '{print $3}' | cut -d '"' -f2`" >> /boot/loader/entries/arch.conf
+echo "options rd.luks.name=`blkid | grep crypto_LUKS | awk '{print $2}' | cut -d '"' -f2`=cryptlvm root=UUID=`blkid | grep lv_root | awk '{print $3}' | cut -d '"' -f2` rw resume=UUID=`blkid | grep lv_swap | awk '{print $3}' | cut -d '"' -f2`" >> /boot/loader/entries/arch.conf
 
 ## long term support kernel (LTS)
 echo 'title Arch Linux LTS' > /boot/loader/entries/arch-lts.conf
 echo 'linux /vmlinuz-linux-lts' >> /boot/loader/entries/arch-lts.conf
 echo 'initrd /initramfs-linux-lts.img' >> /boot/loader/entries/arch-lts.conf
-echo "options rd.luks.name=UUID=`blkid | grep crypto_LUKS | awk '{print $2}' | cut -d '"' -f2`=cryptlvm root=UUID=`blkid | grep lv_root | awk '{print $3}' | cut -d '"' -f2` rw resume=UUID=`blkid | grep lv_swap | awk '{print $3}' | cut -d '"' -f2`" >> /boot/loader/entries/arch-lts.conf
+echo "options rd.luks.name=`blkid | grep crypto_LUKS | awk '{print $2}' | cut -d '"' -f2`=cryptlvm root=UUID=`blkid | grep lv_root | awk '{print $3}' | cut -d '"' -f2` rw resume=UUID=`blkid | grep lv_swap | awk '{print $3}' | cut -d '"' -f2`" >> /boot/loader/entries/arch-lts.conf
 
 # default settings for sd-vconsole
 touch /etc/vconsole.conf
