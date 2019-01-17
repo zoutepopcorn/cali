@@ -20,15 +20,15 @@
 
 # ricing packages
 ## xorg
-yay -Sy xorg xorg-xinit mesa xf86-video-nouveau \
+yay -Sy xorg xorg-xinit mesa xf86-video-nouveau
 ## terminal enhancements
-unclutter rxvt-unicode xterm \
+yay -S unclutter rxvt-unicode xterm
 ## tiling desktop manager
-i3-gaps \
+yay -S i3-gaps
 ## sound
-alsa-utils \
+yay -S alsa-utils
 ## errata
-iw
+yay -S iw
 
 #dotfiles
 #clone cytopyge dotfiles
