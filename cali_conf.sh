@@ -100,4 +100,4 @@ echo 'Remove boot medium'
 
 ## reboot
 echo 'reboot'
-echo 'run capos if preferred'
+echo 'execute cali_post at will'
