@@ -24,9 +24,9 @@ yay -Sy --ask xorg xorg-xinit mesa xf86-video-nouveau
 ## terminal enhancements
 yay -S --ask unclutter rxvt-unicode xterm
 ## tiling window manager
-yay -S --ask i3-gaps
+yay -S --ask i3-gaps rofi dunst
 ## sound
-yay -S --ask alsa-utils
+yay -S --ask pulse-audio alsa-utils
 ## errata
 yay -S --ask iw
 
