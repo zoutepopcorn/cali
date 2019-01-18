@@ -186,8 +186,8 @@ sed -i '/\/usr/s/rw,/ro,/' /mnt/etc/fstab
 # preparing /mnt environment
 echo
 arch-chroot /mnt pacman -Sy git --noconfirm
-arch-chroot /mnt git clone https://github.com/cytopyge/arch_installation
+arch-chroot /mnt git clone https://github.com/cytopyge/cali /tmp/cali
 echo 'changing root'
 echo 'to continue execute manually:'
-echo 'sh arch_installation/cai_conf.sh'
+echo 'sh /tmp/cali/cali_conf.sh'
 arch-chroot /mnt
