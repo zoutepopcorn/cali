@@ -40,9 +40,11 @@ sudo echo 'Include = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf
 # build yay
 git clone https://aur.archlinux.org/yay.git /tmp/yay
 cd /tmp/yay
+# set /usr writable
 sudo mount -o remount,rw /usr
 makepkg -s
 makepkg -i 9.0.1-3-x86_64.pkg.tar.xz
+# set /usr read-only
 sudo mount -o remount,ro /usr
 cd
 rm -rf /tmp/yay

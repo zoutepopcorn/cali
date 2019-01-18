@@ -19,6 +19,7 @@
 #
 
 # ricing packages
+## set /usr writable
 sudo mount -o remount,rw /usr
 ## xorg
 yay -Sy --ask xorg xorg-xinit #mesa xf86-video-nouveau
@@ -30,7 +31,7 @@ yay -S --ask i3-gaps rofi dunst
 yay -S --ask pulse-audio alsa-utils
 ## errata
 yay -S --ask iw
-
+## set /usr read-only
 sudo mount -o remount,ro /usr
 
 #dotfiles
