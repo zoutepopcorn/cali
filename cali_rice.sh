@@ -19,6 +19,7 @@
 #
 
 # ricing packages
+sudo mount -o remount,rw /usr
 ## xorg
 yay -Sy --ask xorg xorg-xinit #mesa xf86-video-nouveau
 ## terminal enhancements
@@ -29,6 +30,8 @@ yay -S --ask i3-gaps rofi dunst
 yay -S --ask pulse-audio alsa-utils
 ## errata
 yay -S --ask iw
+
+sudo mount -o remount,ro /usr
 
 #dotfiles
 #clone cytopyge dotfiles
