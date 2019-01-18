@@ -22,7 +22,7 @@
 ## set /usr writable
 sudo mount -o remount,rw /usr
 ## xorg
-yay -Sy --ask xorg xorg-xinit #mesa xf86-video-nouveau
+yay -Sy --ask xorg xorg-xinit mesa xf86-video-intel
 ## terminal enhancements
 yay -S --ask unclutter rxvt-unicode xterm
 ## tiling window manager
