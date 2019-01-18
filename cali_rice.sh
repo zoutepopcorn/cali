@@ -20,7 +20,7 @@
 
 # ricing packages
 ## xorg
-yay -Sy --ask xorg xorg-xinit mesa xf86-video-nouveau
+yay -Sy --ask xorg xorg-xinit #mesa xf86-video-nouveau
 ## terminal enhancements
 yay -S --ask unclutter rxvt-unicode xterm
 ## tiling window manager
