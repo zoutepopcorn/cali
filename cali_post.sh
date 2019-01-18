@@ -28,16 +28,16 @@
 
 # modify pacman.conf
 ## add color
-sed -i 's/#Color/Color/' /etc/pacman.conf
+sudo sed -i 's/#Color/Color/' /etc/pacman.conf
 ## add total download counter
-sed -i 's/#TotalDownload/TotalDownload/' /etc/pacman.conf
+sudo sed -i 's/#TotalDownload/TotalDownload/' /etc/pacman.conf
 ## add multilib repository
 ### [TODO] comment out existing lines
-echo '################################' >> /etc/pacman.conf
-echo '[multilib]' >> /etc/pacman.conf
-echo 'Include = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf
+sudo echo '################################' >> /etc/pacman.conf
+sudo echo '[multilib]' >> /etc/pacman.conf
+sudo echo 'Include = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf
 
-# yay
+# build yay
 git clone https://aur.archlinux.org/yay.git /tmp/yay
 cd /tmp/yay
 sudo mount -o remount,rw /usr
