@@ -185,6 +185,7 @@ sed -i '/\/usr/s/rw,/ro,/' /mnt/etc/fstab
 
 # preparing /mnt environment
 echo
+#[TODO] sudo?
 arch-chroot /mnt pacman -Sy git --noconfirm
 arch-chroot /mnt git clone https://github.com/cytopyge/cali /tmp/cali
 echo 'changing root'

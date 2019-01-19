@@ -22,25 +22,43 @@
 ## set /usr writable
 sudo mount -o remount,rw /usr
 ## xorg
-yay -Sy --ask xorg xorg-xinit mesa xf86-video-intel
-## terminal enhancements
-yay -S --ask unclutter rxvt-unicode xterm
+yay -Sy --ask xorg xorg-xinit xterm
+## video drivers
+### fallback driver
+yay -S xf86-video-vesa
+### open source
+#### lspci | grep VGA
+#### yay -Ss xf86-video | less
+#### find and install proper drivers
+### nvidia
+#### yay -S nvidia lib32-nvidia-utils
+### ati
+#### yay -S linux-headers caltalist-dkms catalist-utils lib32-catalist-utils
+
+## xf86-video-intel
+
+## terminal emulator of choice
+yay -S --ask rxvt-unicode
 ## tiling window manager
 yay -S --ask i3-gaps rofi dunst
 ## sound
 yay -S --ask pulse-audio alsa-utils
 ## errata
-yay -S --ask iw
+yay -S --ask iw unclutter 
 ## set /usr read-only
 sudo mount -o remount,ro /usr
+
+# config
+#echo 'source ~/.dot/.xinitrc' > ~/.xinitrc
+
 
 #dotfiles
 #clone cytopyge dotfiles
 git clone https://github.com/cytopyge/dotfiles.git ~/.dot
 #sourcing dotfiles
-echo 'source ~/.dot/.xinitrc' > ~/.xinitrc
+#echo 'source ~/.dot/.xinitrc' > ~/.xinitrc
 #echo 'source ~/.dot/.zshrc' > ~/.zshrc
-echo 'source ~/.dot/.vimrc' > ~/.vimrc
+#echo 'source ~/.dot/.vimrc' > ~/.vimrc
 #echo 'source ~/.dot/.tmux.conf' > ~/.tmux.conf
 #echo 'source ~/.dot/.yaourtrc' > ~/.yaourtrc
 
